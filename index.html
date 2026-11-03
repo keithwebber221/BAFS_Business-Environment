@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企會財商業策略指揮中心｜營商環境單元總目錄（第 1 至 3 課）</title>
+  <style>
+    :root {
+      --bg-dark: #090d1a;
+      --panel-dark: #161f38;
+      --card-bg: #ffffff;
+      --soft-bg: #f8fafc;
+      --indigo-dark: #1e1b4b;
+      --indigo: #4f46e5;
+      --indigo-light: #e0e7ff;
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --teal: #0d9488;
+      --teal-light: #ccfbf1;
+      --amber: #d97706;
+      --amber-bright: #fbbf24;
+      --amber-light: #fef3c7;
+      --emerald: #16a34a;
+      --emerald-light: #dcfce7;
+      --rose: #e11d48;
+      --rose-light: #ffe4e6;
+      --text: #0f172a;
+      --muted: #64748b;
+      --scale: 1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "PingFang HK", "Microsoft JhengHei", "Noto Sans TC", sans-serif; user-select: none; }
+    body {
+      background: radial-gradient(circle at top left, #1e3a8a 0%, #0f172a 50%, #090d1a 100%);
+      color: var(--text);
+      padding: 14px;
+      font-size: calc(15.5px * var(--scale));
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    .app { max-width: 1140px; margin: 0 auto; }
+
+    @keyframes popIn { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    .pop { animation: popIn 0.22s ease-out; }
+    .shake { animation: shake 0.3s ease-in-out; }
+
+    /* 頂部商業策略指揮中心看板 */
+    .hero-ceo {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #0f766e 100%);
+      border-radius: 22px;
+      padding: 20px 26px;
+      color: #fff;
+      margin-bottom: 14px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.5);
+      border: 1px solid rgba(147, 197, 253, 0.35);
+    }
+    .hc-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; }
+    .hc-brand { display: flex; align-items: center; gap: 14px; }
+    .ceo-badge {
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #0f172a; padding: 10px 15px; border-radius: 14px;
+      font-weight: 900; font-size: calc(12.5px * var(--scale)); letter-spacing: 0.5px;
+      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35); text-align: center; line-height: 1.25;
+    }
+    .hc-title { font-size: calc(22px * var(--scale)); font-weight: 900; letter-spacing: 0.5px; }
+    .hc-sub { font-size: calc(13px * var(--scale)); color: #bfdbfe; font-weight: 700; margin-top: 2px; }
+
+    .hc-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pill-stat { background: rgba(9, 13, 26, 0.65); border: 1px solid rgba(147, 197, 253, 0.45); padding: 6px 14px; border-radius: 30px; font-weight: 900; font-size: calc(13.5px * var(--scale)); color: #93c5fd; }
+    .ctrl-btn { background: var(--amber-bright); color: #0f172a; border: none; padding: 7px 14px; border-radius: 30px; font-weight: 900; font-size: calc(13px * var(--scale)); cursor: pointer; transition: transform 0.15s; }
+    .ctrl-btn:hover { transform: scale(1.05); background: #fcd34d; }
+
+    /* 進度追蹤列 */
+    .prog-bar-wrap { background: rgba(9, 13, 26, 0.55); border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; border: 1px solid rgba(255,255,255,0.15); }
+    .prog-text { font-size: calc(13.5px * var(--scale)); font-weight: 900; color: #e0f2fe; white-space: nowrap; }
+    .prog-track { flex: 1; min-width: 180px; height: 12px; background: rgba(255,255,255,0.15); border-radius: 20px; overflow: hidden; }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #fbbf24); border-radius: 20px; transition: width 0.35s ease; }
+    .prog-reset { background: transparent; border: 1px solid rgba(255,255,255,0.35); color: #cbd5e1; padding: 4px 10px; border-radius: 8px; font-size: calc(12px * var(--scale)); font-weight: 800; cursor: pointer; }
+    .prog-reset:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* 四大主視圖切換導航 */
+    .hub-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    @media (max-width: 780px) { .hub-nav { grid-template-columns: repeat(2, 1fr); } }
+    .hub-tab {
+      background: var(--panel-dark); border: 2px solid #2e3b5e; border-radius: 14px; padding: 12px 10px;
+      color: #94a3b8; cursor: pointer; text-align: center; transition: all 0.2s;
+    }
+    .hub-tab:hover { border-color: #60a5fa; color: #fff; transform: translateY(-2px); }
+    .hub-tab.active {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-color: #93c5fd; color: #fff; box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+    }
+    .hub-icon { font-size: calc(23px * var(--scale)); display: block; margin-bottom: 3px; }
+    .hub-label { font-size: calc(14.5px * var(--scale)); font-weight: 900; display: block; }
+    .hub-sub { font-size: calc(11.5px * var(--scale)); opacity: 0.9; }
+
+    /* 主舞台 */
+    .stage {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 24px;
+      min-height: 550px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      border: 2px solid #cbd5e1;
+    }
+
+    /* ================= 視圖 1：三課傳送門圖卡 ================= */
+    .portal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 920px) { .portal-grid { grid-template-columns: 1fr; } }
+
+    .biz-card {
+      background: #fff; border: 2px solid #cbd5e1; border-radius: 20px; padding: 22px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: all 0.2s; box-shadow: 0 6px 18px rgba(0,0,0,0.05); position: relative;
+    }
+    .biz-card:hover { transform: translateY(-4px); border-color: var(--indigo); box-shadow: 0 14px 28px rgba(79, 70, 229, 0.16); }
+    .biz-card.completed { border-color: var(--emerald); background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%); }
+
+    .bc-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .bc-badge { padding: 5px 13px; border-radius: 20px; font-weight: 900; font-size: calc(13px * var(--scale)); color: #fff; display: inline-flex; align-items: center; gap: 6px; }
+    .done-btn {
+      padding: 5px 12px; border-radius: 20px; border: 2px solid #cbd5e1; background: #f8fafc;
+      font-size: calc(12px * var(--scale)); font-weight: 900; color: var(--muted); cursor: pointer;
+    }
+    .done-btn.is-done { background: var(--emerald-light); border-color: var(--emerald); color: #14532d; }
+
+    .bc-title { font-size: calc(19.5px * var(--scale)); font-weight: 900; color: var(--text); margin-bottom: 6px; }
+    .bc-sub { font-size: calc(13.5px * var(--scale)); font-weight: 700; color: var(--muted); margin-bottom: 12px; }
+    .bc-formula {
+      background: #f8fafc; border-left: 4px solid var(--indigo); padding: 9px 12px;
+      border-radius: 8px; font-size: calc(12.5px * var(--scale)); font-weight: 900; color: #1e293b; margin-bottom: 12px;
+    }
+    .bc-pills-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .bc-pill { font-size: calc(11.5px * var(--scale)); font-weight: 800; padding: 4px 9px; border-radius: 6px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+
+    .bc-actions { display: flex; flex-direction: column; gap: 8px; }
+    .launch-btn {
+      width: 100%; padding: 12px 16px; border-radius: 12px; border: none;
+      color: #fff; font-size: calc(15px * var(--scale)); font-weight: 900; cursor: pointer;
+      text-align: center; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; gap: 6px;
+      transition: transform 0.15s;
+    }
+    .launch-btn:hover { transform: scale(1.01); opacity: 0.94; }
+    .detail-btn {
+      width: 100%; padding: 9px 14px; border-radius: 10px; border: 2px solid #cbd5e1; background: #fff;
+      font-size: calc(13px * var(--scale)); font-weight: 900; color: var(--indigo-dark); cursor: pointer;
+    }
+    .detail-btn:hover { background: var(--indigo-light); border-color: var(--indigo); }
+
+    /* ================= 視圖 2：互動「商業生態圈三層架構圖」 ================= */
+    .eco-map-box { background: linear-gradient(135deg, #0f172a, #1e1b4b); border-radius: 18px; padding: 20px; color: #fff; margin-bottom: 18px; border: 2px solid #60a5fa; }
+    .em-title { font-size: calc(16px * var(--scale)); font-weight: 900; color: #93c5fd; margin-bottom: 14px; text-align: center; }
+    .em-nodes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 780px) { .em-nodes { grid-template-columns: 1fr; } }
+    .em-node {
+      background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .em-node:hover { border-color: var(--amber-bright); background: rgba(255,255,255,0.14); transform: translateY(-3px); }
+    .em-node.active { background: linear-gradient(145deg, #2563eb, #0d9488); border-color: #fde047; box-shadow: 0 0 18px rgba(56, 189, 248, 0.45); }
+    .emn-ch { font-size: calc(12px * var(--scale)); font-weight: 900; color: #fde047; display: block; margin-bottom: 4px; }
+    .emn-icon { font-size: calc(32px * var(--scale)); display: block; margin-bottom: 4px; }
+    .emn-name { font-size: calc(15.5px * var(--scale)); font-weight: 900; }
+
+    .eco-detail-card { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 16px; padding: 22px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; align-items: center; }
+    @media (max-width: 780px) { .eco-detail-card { grid-template-columns: 1fr; } }
+    .ed-list { list-style: none; margin: 10px 0; }
+    .ed-list li { padding: 7px 0; font-weight: 800; font-size: calc(14.5px * var(--scale)); border-bottom: 1px dashed #cbd5e1; }
+    .ed-trap { background: #fff1f2; border: 2px solid #fda4af; border-radius: 12px; padding: 14px; color: #881337; font-weight: 800; font-size: calc(14px * var(--scale)); }
+
+    /* ================= 視圖 3：跨課「三大比較速查表」工具箱 ================= */
+    .tool-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tt-btn { flex: 1; min-width: 200px; padding: 11px 12px; border-radius: 12px; border: 2px solid #cbd5e1; background: #f8fafc; font-weight: 900; font-size: calc(14px * var(--scale)); color: var(--muted); cursor: pointer; }
+    .tt-btn.active { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+
+    .cheat-table { width: 100%; border-collapse: collapse; font-size: calc(13.5px * var(--scale)); font-weight: 800; background: #fff; border-radius: 12px; overflow: hidden; border: 2px solid #cbd5e1; }
+    .cheat-table th { background: #0f172a; color: #fff; padding: 9px 12px; text-align: left; }
+    .cheat-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; color: #0f172a; vertical-align: top; }
+
+    /* ================= 視圖 4：跨課綜合「商業顧問」三步診斷擂台 ================= */
+    .quiz-banner { background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #fff; border-radius: 16px; padding: 22px; margin-bottom: 16px; border-left: 8px solid var(--amber-bright); }
+    .qb-tag { font-size: calc(12.5px * var(--scale)); color: var(--amber-bright); font-weight: 900; margin-bottom: 6px; display: block; }
+    .qb-stem { font-size: calc(17px * var(--scale)); font-weight: 900; line-height: 1.55; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+    @media (max-width: 820px) { .steps-grid { grid-template-columns: 1fr; } }
+    .step-col { background: var(--soft-bg); border: 2px solid #cbd5e1; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; }
+    .step-q { font-size: calc(13.5px * var(--scale)); font-weight: 900; color: #1e3a8a; margin-bottom: 10px; min-height: 42px; }
+    .step-opts { display: flex; flex-direction: column; gap: 7px; }
+    .step-btn { width: 100%; padding: 10px 12px; border-radius: 9px; border: 2px solid #cbd5e1; background: #fff; font-weight: 800; font-size: calc(13.5px * var(--scale)); color: var(--text); cursor: pointer; text-align: left; transition: all 0.15s; line-height: 1.45; }
+    .step-btn:hover { border-color: var(--indigo); background: var(--indigo-light); }
+    .step-btn.picked { background: var(--indigo-light); border-color: var(--indigo); color: #1e1b4b; box-shadow: inset 0 0 0 1px var(--indigo); }
+
+    .dot-btn { width: calc(34px * var(--scale)); height: calc(34px * var(--scale)); border-radius: 10px; border: 2px solid #cbd5e1; background: #fff; font-weight: 900; font-size: calc(13.5px * var(--scale)); cursor: pointer; color: var(--muted); }
+    .dot-btn.active { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+    .helper-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--amber); background: var(--amber-light); color: #92400e; font-weight: 900; font-size: calc(12.5px * var(--scale)); cursor: pointer; }
+
+    .feedback-pop { margin-top: 14px; padding: 16px 18px; border-radius: 14px; font-size: calc(14.5px * var(--scale)); font-weight: 700; display: none; line-height: 1.65; }
+    .fb-ok { background: var(--emerald-light); border: 2px solid var(--emerald); color: #14532d; }
+    .fb-err { background: var(--rose-light); border: 2px solid var(--rose); color: #881337; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- 頂部商業策略指揮中心看板 -->
+  <header class="hero-ceo">
+    <div class="hc-top">
+      <div class="hc-brand">
+        <div class="ceo-badge">🌐 CEO STRATEGY<br>& BUSINESS HUB</div>
+        <div>
+          <div class="hc-title">企會財（BAFS）商業策略指揮中心｜營商環境單元總目錄</div>
+          <div class="hc-sub">涵蓋必修部分《營商環境》全套 3 課（第 1 課：香港的營商環境 ➔ 第 2 課：企業的擁有權類型 ➔ 第 3 課：商業道德與社會責任）</div>
+        </div>
+      </div>
+      <div class="hc-controls">
+        <div class="pill-stat" id="doneCountBadge">🏆 完成進度：0 / 3 課</div>
+        <button class="ctrl-btn" onclick="toggleZoom()" id="zoomBtn">🔍 投影大字體：關</button>
+      </div>
+    </div>
+    <div class="prog-bar-wrap">
+      <span class="prog-text" id="progPercentText">營商環境單元進度：0%</span>
+      <div class="prog-track"><div class="prog-fill" id="progFillBar" style="width: 0%;"></div></div>
+      <button class="prog-reset" onclick="resetProgress()">🔄 重置進度標記</button>
+    </div>
+  </header>
+
+  <!-- 四大導航模式切換 -->
+  <nav class="hub-nav">
+    <button class="hub-tab active" onclick="switchHubView(0)" id="hTab0">
+      <span class="hub-icon">🚀</span>
+      <span class="hub-label">三課互動平台傳送門</span>
+      <span class="hub-sub">一鍵進入第 1 至 3 課</span>
+    </button>
+    <button class="hub-tab" onclick="switchHubView(1)" id="hTab1">
+      <span class="hub-icon">🌐</span>
+      <span class="hub-label">商業生態三層架構圖</span>
+      <span class="hub-sub">串連 3 課重點與考場伏位</span>
+    </button>
+    <button class="hub-tab" onclick="switchHubView(2)" id="hTab2">
+      <span class="hub-icon">⚡</span>
+      <span class="hub-label">跨課三大比較速查表</span>
+      <span class="hub-sub">經貿組織、擁有權與持份者</span>
+    </button>
+    <button class="hub-tab" onclick="switchHubView(3)" id="hTab3">
+      <span class="hub-icon">🎯</span>
+      <span class="hub-label">跨課商業顧問擂台</span>
+      <span class="hub-sub">全單元融會貫通實戰個案</span>
+    </button>
+  </nav>
+
+  <!-- 主舞台 -->
+  <main class="stage" id="hubStage"></main>
+</div>
+
+<script>
+  // =========================================================================
+  // 🔗 【老師專用設定區】請在此處填入《營商環境》第 1 至 3 課的網址或檔案名稱
+  // =========================================================================
+  const BIZ_ENV_URLS = {
+    1: "be_lesson1.html", // 第 1 課：香港的營商環境
+    2: "be_lesson2.html", // 第 2 課：企業的擁有權類型
+    3: "be_lesson3.html"  // 第 3 課：商業道德與社會責任
+  };
+
+  // 設定點擊傳送門時是否在新分頁開啟（true = 新分頁開啟，適合嵌入 Google Sites）
+  const OPEN_IN_NEW_TAB = true;
+
+  // ==================== 三課完整資料庫 ====================
+  const bizLessons = [
+    {
+      ch: 1,
+      icon: "🌏",
+      color: "linear-gradient(135deg, #2563eb, #4f46e5)",
+      badgeBg: "#2563eb",
+      title: "第 1 課：香港的營商環境",
+      subtitle: "商業的角色、香港經濟四大特徵、《安排》(CEPA)、全球化與國際貿易組織、六大外部環境因素",
+      formula: "宏觀分析：政治 ＆ 法律 ＆ 外部經濟 ＆ 社會 ＆ 文化 ＆ 科技 ＆ 自然地理（含機場港口基建）",
+      features: ["⚡ 視覺對比卡", "🎮 情境快閃分類", "🧲 磁力積木砌答案", "🖍️ 紅筆捉錯挑戰", "🏆 選擇題消去擂台"],
+      points: [
+        "商業角色與經濟特徵：透過「出口、轉口及服務訪港旅客」為香港賺取外匯；簡單低稅制只徵利得稅、薪俸稅、物業稅（惟煙草、烈酒、甲醇及碳氫油類四類商品仍須課稅）。",
+        "與內地經貿關係及國際組織：《安排》下香港原產貨物進口內地零關稅，投資「非服務業」享國民待遇（服務業享優惠待遇）；世貿組織（WTO）具條約義務並會仲裁貿易糾紛，亞太經合組織（APEC）屬自願性質不仲裁糾紛，且兩者皆不會向成員提供財政貸款支援。",
+        "影響商業決策的因素分類：機場、港口及道路（基礎建設）歸類為「自然地理因素」；人口老化、教育水平與兩文三語能力屬「社會因素」；飲食口味喜好屬「文化因素」。"
+      ],
+      trap: "考場伏位：① 從外地「進口」貨品是支出外匯而非賺取外匯！② 內地是香港最大貿易夥伴，但香港並非內地最大貿易夥伴；《安排》亦無允許資金自由流動！③「東主自身沒有足夠資金」屬於企業內在因素，絕非外部經濟因素！"
+    },
+    {
+      ch: 2,
+      icon: "🏢",
+      color: "linear-gradient(135deg, #4f46e5, #0f766e)",
+      badgeBg: "#4f46e5",
+      title: "第 2 課：企業的擁有權類型",
+      subtitle: "獨資經營、普通合夥與有限合夥（及名義合夥人）、私人與公眾有限公司（上市公司）、特許經營、合營企業、公營及跨國公司",
+      formula: "法律地位：只有「有限公司（私人／公眾）」及「公營公司」屬獨立法定個體（法人，享永久延續權）",
+      features: ["⚡ 視覺對比卡", "🎮 情境快閃分類", "🧲 磁力積木砌答案", "🖍️ 紅筆捉錯挑戰", "🏆 選擇題消去擂台"],
+      points: [
+        "獨資與合夥：均非獨立法定個體，但利得稅率（15%）低於有限公司（16.5%）；有限合夥必須最少有一名普通合夥人負無限責任，而有限合夥人（有出資、負有限責任）與名義合夥人（不出資、借出名字聲譽、須負債務責任）皆不參與日常管理。",
+        "私人有限公司 vs 公眾有限公司（上市公司）：兩者股東均負有限責任；私人有限公司不可向公眾發股，轉讓股份須經董事局批准，毋須向公眾公開財務報表（但每年須向股東披露）；上市公司集資渠道廣，但合規成本高、喪失財務私隱且原股東控制權易被攤薄。",
+        "其他經營模式：特許經營加盟商易入行及有穩定供貨，但控制權小且虧損時仍須付專利費；合營企業是最少兩家企業組成的新獨立企業個體（項目完成後通常解散）；公營公司由政府擁有並委任董事局，自負盈虧運作，政府不參與日常營運。"
+      ],
+      trap: "考場伏位：① 有限合夥並不是獨立法定個體！② 有限公司的利得稅率比獨資及合夥高（而非較低）！③ 僅從外國購買原材料、在海外發債或經代理出口貨品的本地公司並不算「跨國公司」（必須在其他國家設有廠房或分行等實質營運）！"
+    },
+    {
+      ch: 3,
+      icon: "🌱",
+      color: "linear-gradient(135deg, #0d9488, #16a34a)",
+      badgeBg: "#0d9488",
+      title: "第 3 課：商業道德與社會責任",
+      subtitle: "九大持份者界定、企業社會責任（超越法例基本要求）、商業道德與法律的區別、加強商業道德意識的六大方法",
+      formula: "社會責任準則：必須「超越各項法例的基本要求」造福社會（僅守法底線或純減價促銷均不算！）",
+      features: ["⚡ 視覺對比卡", "🎮 情境快閃分類", "🧲 磁力積木砌答案", "🖍️ 紅筆捉錯挑戰", "🏆 選擇題消去擂台"],
+      points: [
+        "九大持份者範圍：東主（股東）、僱員、顧客、供應商、分銷商、債權人、政府、社區及競爭對手（注意：已離職的前僱員或借錢給員工私人的朋友不屬企業持份者）。",
+        "對各持份者履行社會責任的做法：對僱員（提供安全環境、彈性工時及培訓，提升士氣及減低流失率）；對分銷商（提供優質貨品及銷售指導）；對供應商（不強逼降價、不收高昂上架費、準時付款）；對股東（考慮長遠利益、顧及全體大小股東福祉）。",
+        "商業道德與《專業操守》：商業道德沒有清晰明確定義；法律上可接受（合法）的行為可能是不道德的，公眾可透過「杯葛（罷買）」制裁不道德企業。企業可透過自行編製《專業操守》、道德培訓、獎懲制度及高層以身作則來加強員工道德意識。"
+      ],
+      trap: "考場伏位：① 支付法定最低工資、配安全帶或月底後第 7 天支薪只屬「遵守法例」，聖誕八折優惠只屬「推廣策略」，配合政府長者乘車計劃只屬配合政策，三者皆不算履行社會責任！② 向股東派發股息並不是對股東履行社會責任的例子！③ 政府不會為企業編製《專業操守》，法例亦無強制要求！"
+    }
+  ];
+
+  // ==================== 跨課綜合「商業顧問」三步診斷個案庫 ====================
+  let crossCases = [
+    {
+      title: "跨課綜合個案 1：「精確時計」與供應商「東方時計有限公司」的全方位商業分析（串連第 1、2 及 3 課）",
+      tag: "課本跨冊綜合題型 ｜ 企業擁有權比較（第 2 課）＋ 自然地理因素與《安排》（第 1 課）＋ 持份者社會責任（第 3 課）",
+      desc: "陳祖銘獨資創辦了售賣鐘錶的「精確時計」，並向供應商「東方時計有限公司（私人有限公司）」賒購手錶。最近，東方時計有限公司計劃在香港設廠生產自家品牌手錶並進軍內地市場；同時，有一批手錶的錶帶塗層被驗出含有「目前未受香港法例管制、但長期接觸可能引致皮膚過敏」的化學物質。",
+      q1: "1️⃣ 【第 2 課擁有權比較】比較陳祖銘的「精確時計（獨資經營）」與供應商「東方時計有限公司（私人有限公司）」，兩者在法律地位、東主債務責任及利得稅率上有何不同？",
+      opts1: [
+        { text: "法律地位：精確時計不是獨立法定個體（無永久延續權），東方時計則是獨立於股東的法定個體（享永久延續權）；債務責任：陳祖銘須承擔無限債務責任，東方時計的股東則只負有限債務責任；稅率：精確時計的利得稅率（15%）低於東方時計有限公司（16.5%）", ok: true },
+        { text: "兩者均屬於獨立法定個體；但精確時計的利得稅率高於東方時計有限公司，且東方時計可向公眾發行股票集資", ok: false },
+        { text: "精確時計的東主只負有限債務責任；而東方時計有限公司則必須每年在報章向公眾披露財務報表", ok: false },
+        { text: "兩者的股東人數上限均為 50 人，且轉讓擁有權均須先獲香港特區政府批准", ok: false }
+      ],
+      q2: "2️⃣ 【第 1 課營商環境與《安排》】陳祖銘為「精確時計」實體店選址時應考慮甚麼「自然地理因素」？而東方時計有限公司在香港生產符合原產地規則的手錶出口內地，在《安排》（CEPA）下可享甚麼優惠？",
+      opts2: [
+        { text: "自然地理因素：應考慮香港的地理位置與「基礎建設（如店舖所在的交通運輸網絡是否便利顧客前往及方便運送貨物）」；在《安排》下，在香港生產且符合原產地規則的手錶出口到內地可享「零關稅優惠」，有助降低在內地的售價並提升競爭力", ok: true },
+        { text: "自然地理因素：應考慮香港市民的平均可支配收入及商舖租金水平；在《安排》下，兩地資金可以完全不受外匯管制自由流動", ok: false },
+        { text: "自然地理因素：應考慮香港市民普遍懂得兩文三語；在《安排》下，東方時計在內地開設鐘錶零售店（服務業）可享國民待遇", ok: false },
+        { text: "在《安排》下，東方時計可向世界貿易組織申請五百萬港元的免息創業貸款", ok: false }
+      ],
+      q3: "3️⃣ 【第 3 課商業道德與社會責任】針對該批含有「未受法例管制但可致皮膚過敏化學物」的手錶，從商業道德、對「分銷商（精確時計）」及「同行競爭對手」的影響分析，東方時計應如何處理？",
+      opts3: [
+        { text: "雖然售賣該批手錶並未觸犯現有法例（合法），但隱瞞並照常批發屬於「不道德」行為！若隱瞞出售，一旦被揭發不但會令分銷商（精確時計）遭顧客投訴及杯葛而聲譽受損，更會損害整個香港鐘錶業的形象而連累同行（競爭對手）；故東方時計應主動回收並改用安全物料，履行對分銷商及顧客的社會責任", ok: true },
+        { text: "既然該化學物質尚未受香港法例管制，照常銷售便完全合乎商業道德；東方時計只需在聖誕節向精確時計提供八折批發優惠，便已履行了企業社會責任", ok: false },
+        { text: "競爭對手與分銷商均不屬於東方時計的持份者，因此該批手錶的品質只會影響最終消費者，與分銷商及同行無關", ok: false },
+        { text: "東方時計應該要求香港特區政府立即為該公司重新編寫一份《專業操守》以解決問題", ok: false }
+      ],
+      exp: "【跨第 1、2、3 課整合拆解】<br>1. **第 2 課（課本第 54 頁個案討論題 2）**：獨資經營 vs 私人有限公司的三大差異在於**法律地位（非獨立法人 vs 獨立法人）**、**債務責任（無限責任 vs 有限責任）**、**延續性（東主離世即解散 vs 永久延續權）**及**利得稅率（獨資較低、有限公司較高）**。<br>2. **第 1 課（課本第 38 頁個案討論題 4）**：店舖選址受「自然地理因素」中的**地理位置及交通運輸網絡（基礎建設）**影響；而香港原產貨品在《安排》下進口內地享**零關稅**。<br>3. **第 3 課**：合法行為未必合乎商業道德！出售有潛在危害的產品會連累**分銷商**及損害行業形象連累**競爭對手**（兩者皆為九大持份者之一）！"
+    },
+    {
+      title: "跨課綜合個案 2：韓國流行舞蹈學校來港擴張的策略、環境因素與社會責任（串連第 1、2 及 3 課）",
+      tag: "跨國擴張綜合題型 ｜ 特許經營 vs 合營企業（第 2 課）＋ 社會文化與科技因素（第 1 課）＋ 僱員與社區責任（第 3 課）",
+      desc: "韓國知名流行舞蹈學校「欣欣舞蹈室」計劃進軍香港市場。總部正考慮採用「特許經營」方式授權香港投資者開設分校，或者與香港一家本地娛樂公司共同出資成立「合營企業」。為配合香港市場，分校計劃推出網上報名及電子支付系統，並考慮推出每星期 4.5 天工作制予全職導師。",
+      q1: "1️⃣ 【第 1 課環境因素分類】「香港年輕人熱愛韓國流行音樂文化（K-pop）」、「香港市民普遍具備兩文三語能力」以及「分校保障網上報名系統的網絡安全並接納電子支付」，這三項分別屬於甚麼外部環境因素？",
+      opts1: [
+        { text: "熱愛韓國流行文化喜好屬於「文化因素」；市民具備兩文三語能力（使用的語言及教育水平）屬於「社會因素」；網絡安全及電子支付方式則屬於「科技因素」", ok: true },
+        { text: "熱愛韓國流行文化屬於「外部經濟因素」；兩文三語能力屬於「科技因素」；電子支付屬於「自然地理因素」", ok: false },
+        { text: "三項全部屬於「法律及政治因素」", ok: false },
+        { text: "兩文三語能力屬於「企業內在因素」；網絡安全屬於「自然地理因素（基礎建設）」", ok: false }
+      ],
+      q2: "2️⃣ 【第 2 課特許經營 vs 合營企業】比較總部採用「特許經營」與成立「合營企業」兩種擴張模式，下列哪項分析是正確的？",
+      opts2: [
+        { text: "若採用「特許經營」，香港分校（特許權使用人）即使在某月蒙受虧損仍須按期向總部支付特許權使用費，但總部面對分校一旦經營不善會損害品牌整體聲譽（或加盟商日後自立門戶成為競爭者）的風險；若成立「合營企業」，則會組成一個獨立於原有兩家公司的新企業個體，由雙方共同承擔風險及結合本地專長", ok: true },
+        { text: "若採用「特許經營」，香港加盟商對分校有百分百的自主控制權，且虧損時無須向總部繳交任何費用；若成立「合營企業」，出資較多的一方必定獨攬所有最終決定權", ok: false },
+        { text: "特許經營店與合營企業均屬於由香港特區政府全資擁有的「公營公司」，董事局成員均由政府委任", ok: false },
+        { text: "只要欣欣舞蹈室從韓國出口舞蹈教材光碟到香港銷售（沒有在香港或海外設立分校或實質營運），該舞蹈室便自動成為一家「跨國公司」", ok: false }
+      ],
+      q3: "3️⃣ 【第 3 課社會責任】分校在增加人工成本下仍容許全職導師「每星期只工作 4.5 天」，並在「深夜關掉招牌燈光及加強排舞室隔音設備」，這兩項措施分別對哪類持份者履行了社會責任？對分校有何好處？",
+      opts3: [
+        { text: "每周 4.5 天工作是對「僱員」履行社會責任（有助提升導師士氣、歸屬感與教學生產力，並減低員工流失率）；深夜關掉招牌燈光及加強隔音則是對「社區（附近居民及環境）」履行社會責任（減少光污染及噪音滋擾，建立良好企業形象與社區關係）", ok: true },
+        { text: "這兩項措施只是遵守香港《最低工資條例》及《商業登記條例》的最低法例底線，因此完全不算履行企業社會責任", ok: false },
+        { text: "每周 4.5 天工作是對「分銷商」履行社會責任；深夜關掉招牌燈光則是對「競爭對手」履行社會責任", ok: false },
+        { text: "這兩項措施會令分校獲得世界貿易組織頒發的免稅證書，從此無須在香港繳納利得稅", ok: false }
+      ],
+      exp: "【跨第 1、2、3 課整合拆解】<br>1. **第 1 課因素精準分類**：文化背景引起的喜好／口味屬**文化因素**；人口結構、教育水平及使用的語言屬**社會因素**；網絡安全與電子支付屬**科技因素**。<br>2. **第 2 課特許經營與合營企業**：加盟商虧損仍須付專利費；總部則面對品牌聲譽受個別分店連累及加盟商自立門戶的風險。合營企業則是組成新獨立企業個體。<br>3. **第 3 課社會責任**：提供超越法例要求的福利（4.5 天工作）屬對**僱員**負責（提升士氣及生產力、減低流失率）；減少光污染及噪音滋擾屬對**社區（附近居民）**負責！"
+    }
+  ];
+
+  // ==================== 狀態管理 ====================
+  let curView = 0; // 0: 三課傳送門, 1: 商業生態三層架構圖, 2: 跨課三大比較速查表, 3: 跨課商業顧問擂台
+  let selectedEcoCh = 1;
+  let curToolTab = 0;
+  let curCrossIdx = 0;
+  let stepPicks = [null, null, null];
+  let isZoom = false;
+
+  let completedMap = {};
+  try {
+    const saved = localStorage.getItem("bafs_be_done_v1");
+    if (saved) completedMap = JSON.parse(saved);
+  } catch (e) {}
+
+  function saveProgress() {
+    try {
+      localStorage.setItem("bafs_be_done_v1", JSON.stringify(completedMap));
+    } catch (e) {}
+    updateProgressBar();
+  }
+
+  function toggleLessonDone(ch, e) {
+    if (e) e.stopPropagation();
+    completedMap[ch] = !completedMap[ch];
+    saveProgress();
+    renderHubStage();
+  }
+
+  function resetProgress() {
+    completedMap = {};
+    saveProgress();
+    renderHubStage();
+  }
+
+  function updateProgressBar() {
+    let cnt = 0;
+    for (let i = 1; i <= 3; i++) {
+      if (completedMap[i]) cnt++;
+    }
+    const pct = Math.round((cnt / 3) * 100);
+    document.getElementById("doneCountBadge").innerText = `🏆 完成進度：${cnt} / 3 課`;
+    document.getElementById("progPercentText").innerText = `營商環境單元進度：${pct}%（已完成 ${cnt} 課）`;
+    document.getElementById("progFillBar").style.width = `${pct}%`;
+  }
+
+  function toggleZoom() {
+    isZoom = !isZoom;
+    document.documentElement.style.setProperty('--scale', isZoom ? '1.16' : '1');
+    document.getElementById("zoomBtn").innerText = isZoom ? "🔍 投影大字體：開" : "🔍 投影大字體：關";
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function switchHubView(v) {
+    curView = v;
+    for (let i = 0; i < 4; i++) {
+      document.getElementById(`hTab${i}`).className = "hub-tab" + (i === v ? " active" : "");
+    }
+    if (v === 3) {
+      crossCases.forEach(c => {
+        c.opts1 = shuffle(c.opts1);
+        c.opts2 = shuffle(c.opts2);
+        c.opts3 = shuffle(c.opts3);
+      });
+      stepPicks = [null, null, null];
+    }
+    renderHubStage();
+  }
+
+  function jumpToEcoMap(ch) {
+    selectedEcoCh = ch;
+    switchHubView(1);
+  }
+
+  function renderHubStage() {
+    const stage = document.getElementById("hubStage");
+    stage.classList.remove("pop");
+    void stage.offsetWidth;
+    stage.classList.add("pop");
+
+    if (curView === 0) renderPortalView(stage);
+    else if (curView === 1) renderEcoMapView(stage);
+    else if (curView === 2) renderToolsView(stage);
+    else if (curView === 3) renderCrossQuizView(stage);
+  }
+
+  // ==================== 渲染視圖 1：三課傳送門圖卡 ====================
+  function renderPortalView(stage) {
+    const cardsHtml = bizLessons.map(item => {
+      const isDone = !!completedMap[item.ch];
+      const url = BIZ_ENV_URLS[item.ch] || "#";
+      const targetAttr = OPEN_IN_NEW_TAB ? 'target="_blank" rel="noopener"' : '';
+      const pills = item.features.map(f => `<span class="bc-pill">${f}</span>`).join("");
+
+      return `
+        <div class="biz-card ${isDone ? 'completed' : ''}">
+          <div>
+            <div class="bc-top">
+              <span class="bc-badge" style="background:${item.badgeBg};">${item.icon} 第 ${item.ch} 課</span>
+              <button class="done-btn ${isDone ? 'is-done' : ''}" onclick="toggleLessonDone(${item.ch}, event)">
+                ${isDone ? '✅ 已完成溫習' : '⬜ 標記完成'}
+              </button>
+            </div>
+            <div class="bc-title">${item.title}</div>
+            <div class="bc-sub">${item.subtitle}</div>
+            <div class="bc-formula">📌 ${item.formula}</div>
+            <div style="font-size:calc(12px * var(--scale)); font-weight:900; color:#64748b; margin-bottom:6px;">🎮 內置 5 大視覺遊戲化訓練模組：</div>
+            <div class="bc-pills-wrap">${pills}</div>
+          </div>
+          <div class="bc-actions">
+            <a class="launch-btn" style="background:${item.color};" href="${url}" ${targetAttr}>
+              🚀 進入第 ${item.ch} 課互動平台 →
+            </a>
+            <button class="detail-btn" onclick="jumpToEcoMap(${item.ch})">🔍 檢視本課重點與考場伏位</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    stage.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:18px; padding-bottom:12px; border-bottom:2px solid #e2e8f0;">
+        <div style="font-weight:900; color:#1e3a8a; font-size:calc(17px * var(--scale));">
+          🚀 請選擇你要進入的《營商環境》視覺互動學習平台：
+        </div>
+        <span style="font-size:calc(13px * var(--scale)); font-weight:800; color:var(--muted);">💡 提示：全套 3 課均已內置「🔀 動態隨機洗牌引擎」與「投影大字體」模式</span>
+      </div>
+      <div class="portal-grid">${cardsHtml}</div>
+    `;
+  }
+
+  // ==================== 渲染視圖 2：互動「商業生態圈三層架構圖」 ====================
+  function renderEcoMapView(stage) {
+    const layerNames = ["第一層：宏觀營商環境", "第二層：企業擁有權制度", "第三層：商業道德與社會責任"];
+    const nodesHtml = bizLessons.map((item, idx) => `
+      <div class="em-node ${selectedEcoCh === item.ch ? 'active' : ''}" onclick="selectEcoNode(${item.ch})">
+        <span class="emn-ch">${layerNames[idx]}（第 ${item.ch} 課）</span>
+        <span class="emn-icon">${item.icon}</span>
+        <div class="emn-name">${item.title.split("：")[1]}</div>
+      </div>
+    `).join("");
+
+    const curItem = bizLessons.find(d => d.ch === selectedEcoCh);
+    const url = BIZ_ENV_URLS[curItem.ch] || "#";
+    const targetAttr = OPEN_IN_NEW_TAB ? 'target="_blank" rel="noopener"' : '';
+    const pointsHtml = curItem.points.map(p => `<li>✔️ ${p}</li>`).join("");
+
+    stage.innerHTML = `
+      <div class="eco-map-box">
+        <div class="em-title">🌐 點擊下方商業生態圈三層樞紐節點，即時檢視各課的核心考點與高頻失分陷阱：</div>
+        <div class="em-nodes">${nodesHtml}</div>
+      </div>
+
+      <div class="eco-detail-card">
+        <div>
+          <span class="bc-badge" style="background:${curItem.badgeBg}; margin-bottom:8px;">${curItem.icon} 第 ${curItem.ch} 課核心檔案</span>
+          <h3 style="font-size:calc(21px * var(--scale)); font-weight:900; margin-bottom:6px;">${curItem.title}</h3>
+          <div class="bc-formula" style="margin-bottom:10px;">📌 ${curItem.formula}</div>
+          <div style="font-weight:900; color:#1e3a8a; font-size:calc(14.5px * var(--scale));">🎯 本課三大必考重點：</div>
+          <ul class="ed-list">${pointsHtml}</ul>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="ed-trap">
+            <div style="font-size:calc(15px * var(--scale)); font-weight:900; margin-bottom:4px;">⚠️ 公開試高頻失分陷阱：</div>
+            <div>${curItem.trap}</div>
+          </div>
+          <a class="launch-btn" style="background:${curItem.color}; padding:15px;" href="${url}" ${targetAttr}>
+            🚀 立即進入「${curItem.title}」互動平台 →
+          </a>
+          <button class="detail-btn" onclick="switchHubView(0)">← 返回三課總目錄列表</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function selectEcoNode(ch) {
+    selectedEcoCh = ch;
+    renderEcoMapView(document.getElementById("hubStage"));
+  }
+
+  // ==================== 渲染視圖 3：跨課「三大比較速查表」工具箱 ====================
+  function renderToolsView(stage) {
+    let bodyHtml = "";
+    if (curToolTab === 0) {
+      bodyHtml = `
+        <div style="overflow-x:auto;">
+          <table class="cheat-table">
+            <thead>
+              <tr>
+                <th>比較範疇（第 1 課核心）</th>
+                <th>核心得分內容（🟢 課本真相）</th>
+                <th>公開試常犯陷阱（🔴 切勿誤選！）</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. 自由港與簡單低稅制</strong></td>
+                <td>只徵收三項直接稅：<strong>利得稅、薪俸稅、物業稅</strong>（免徵銷售稅、增值稅及資本增值稅）；不設外匯管制，保障資金自由流動。</td>
+                <td>❌ 誤以為「所有進口香港的商品一律免稅」——事實上<strong>煙草、烈酒、甲醇及碳氫油類四類商品</strong>（以及首次登記汽車）在香港均須課稅！</td>
+              </tr>
+              <tr>
+                <td><strong>2. 《內地與香港關於建立更緊密經貿關係的安排》(CEPA)</strong></td>
+                <td>• <strong>貨物貿易</strong>：符合原產地規則的香港貨物進口內地享<strong>零關稅</strong>。<br>• <strong>服務貿易</strong>：香港服務提供者享<strong>優惠待遇</strong>進入內地市場。<br>• <strong>投資</strong>：香港投資者在內地投資<strong>非服務業</strong>享<strong>國民待遇</strong>。<br>• <strong>經濟技術合作</strong>：促進專業資格互認及重點領域合作。</td>
+                <td>❌ 誤以為「服務業享國民待遇」（非服務業才享國民待遇）！<br>❌ 誤以為「外國經香港轉口內地的貨物享零關稅」！<br>❌ 誤以為「《安排》允許資金及人口在兩地之間自由流動」！<br>❌ 誤以為「香港是內地最大的貿易夥伴」（內地是香港最大，但香港並非內地最大）！</td>
+              </tr>
+              <tr>
+                <td><strong>3. 世貿組織 (WTO) vs 亞太經合組織 (APEC)</strong></td>
+                <td>• <strong>世貿組織 (WTO)</strong>：具約束力條約義務，會<strong>仲裁成員間的貿易糾紛</strong>及實施制裁；向發展中國家提供技術支援及培訓（香港是創始成員）。<br>• <strong>亞太經合組織 (APEC)</strong>：透過共識作決定，承諾屬<strong>自願性質</strong>，推動亞太區自由貿易及經濟技術合作。</td>
+                <td>❌ 誤以為「兩個組織會向成員或企業提供財政貸款／資金援助」——<strong>兩者皆不會提供任何財政支援</strong>！<br>❌ 誤以為「亞太經合組織會解決貿易糾紛」或「香港是亞太經合組織的創始成員」！</td>
+              </tr>
+              <tr>
+                <td><strong>4. 影響商業決策的因素分類</strong></td>
+                <td>• <strong>自然地理因素</strong>：氣候、地理位置、天然資源及<strong>基礎建設（機場、貨櫃碼頭、道路網絡、供水供電）</strong>。<br>• <strong>社會 vs 文化因素</strong>：人口結構、教育水平、兩文三語屬<strong>社會因素</strong>；飲食口味喜好、價值觀、工作習慣屬<strong>文化因素</strong>。<br>• <strong>法律因素</strong>：《最低工資條例》、商業登記、消防及版權條例。</td>
+                <td>❌ 誤將「機場、港口及道路基建」歸類為科技因素！<br>❌ 誤將「市民的平均可支配收入及購買力（屬外部經濟因素）」歸類為社會因素！<br>❌ 誤將「東主自身沒有足夠資金營運（屬企業內在因素）」當作外部經濟因素！</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else if (curToolTab === 1) {
+      bodyHtml = `
+        <div style="overflow-x:auto;">
+          <table class="cheat-table">
+            <thead>
+              <tr>
+                <th>比較維度（第 2 課核心）</th>
+                <th>獨資經營</th>
+                <th>普通合夥 vs 有限合夥</th>
+                <th>私人有限公司</th>
+                <th>公眾有限公司（上市公司）</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>法律地位與延續性</strong></td>
+                <td><strong>非獨立法定個體</strong>（無永久延續權）</td>
+                <td><strong>非獨立法定個體</strong>（無永久延續權）</td>
+                <td><strong>獨立法定個體（法人）</strong>，享永久延續權</td>
+                <td><strong>獨立法定個體（法人）</strong>，享永久延續權</td>
+              </tr>
+              <tr>
+                <td><strong>東主／股東債務責任</strong></td>
+                <td><strong>無限債務責任</strong>（虧損時或須動用個人儲蓄還債）</td>
+                <td>• <strong>普通合夥人</strong>：無限連帶責任（參與日常管理）<br>• <strong>有限合夥人</strong>：有限責任（有出資，但<strong>不參與日常管理</strong>）<br>• <strong>名義合夥人</strong>：不出資亦不參與管理，只借出名字聲譽，但須負合夥債務責任</td>
+                <td>全體股東均享<strong>有限債務責任</strong>（最高損失僅限於投資額）</td>
+                <td>全體股東均享<strong>有限債務責任</strong>（最高損失僅限於投資額）</td>
+              </tr>
+              <tr>
+                <td><strong>東主／股東人數與股份轉讓</strong></td>
+                <td>1 人</td>
+                <td>最少 2 人（有限合夥必須最少有 1 名普通合夥人及 1 名有限合夥人）</td>
+                <td>1 至 50 人（不計僱員股東）；<strong>轉讓股份須獲董事局批准</strong>，不可向公眾發股</td>
+                <td>最少 1 人，<strong>無上限</strong>；可向公眾發行股票及債券，股份可在交易所<strong>自由買賣轉讓</strong></td>
+              </tr>
+              <tr>
+                <td><strong>財務報表披露與利得稅率</strong></td>
+                <td>毋須向公眾披露；標準利得稅率<strong>較低（15%）</strong></td>
+                <td>毋須向公眾披露；標準利得稅率<strong>較低（15%）</strong></td>
+                <td><strong>毋須向公眾披露</strong>（私隱度高），但<strong>每年須向股東披露</strong>；法團利得稅率<strong>較高（16.5%）</strong></td>
+                <td><strong>必須定期向公眾披露</strong>經審計財務報表（喪失財務私隱、合規成本高）；法團利得稅率<strong>較高（16.5%）</strong></td>
+              </tr>
+              <tr>
+                <td><strong>特許經營、合營企業、公營公司與跨國公司要點</strong></td>
+                <td colspan="4">
+                  • <strong>特許經營</strong>：加盟商（特許權使用人）易進入市場及享穩定供貨，但控制權小，且<strong>即使業務虧損仍須向總部支付特許權使用費</strong>。<br>
+                  • <strong>合營企業</strong>：最少兩家企業共同出資組成的<strong>新獨立企業個體</strong>，共同分擔風險及結合專長（合作項目完成後通常解散；並非必由出資最多者獨攬決定權）。<br>
+                  • <strong>公營公司</strong>（如海洋公園、機管局）：屬<strong>獨立法定個體</strong>，由政府擁有並<strong>委任董事局成員</strong>，以商業模式自負盈虧運作，<strong>政府不會參與其日常營運</strong>。<br>
+                  • <strong>跨國公司</strong>：必須在母國以外的其他國家<strong>設有廠房或銷售分行等實質營運</strong>（僅從外國進口原料、在海外發債或經代理出口貨品並不算跨國公司）。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      bodyHtml = `
+        <div style="overflow-x:auto;">
+          <table class="cheat-table">
+            <thead>
+              <tr>
+                <th>持份者類別（第 3 課九大持份者）</th>
+                <th>企業對該持份者履行社會責任的具體做法</th>
+                <th>考場常見陷阱與商業道德要點</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. 僱員 (Employees)</strong></td>
+                <td>提供安全健康工作環境、高於法例要求的薪酬福利、彈性工時（如每周 4.5 天工作、惡劣天氣在家工作）及進修培訓機會。</td>
+                <td>❌ 誤將「支付法定最低工資」、「配置法定安全帶」或「在月底後第 7 天（法定限期）支薪」當作履行社會責任（這只屬遵守法例基本要求）！</td>
+              </tr>
+              <tr>
+                <td><strong>2. 顧客 (Customers)</strong></td>
+                <td>確保產品安全及品質、提供準確產品資訊、良好售後服務（主動回收有缺陷產品），以及為有特殊需要顧客提供支援（如點字圖、平價售糧予獨居長者）。</td>
+                <td>❌ 誤將「聖誕節提供八折購物優惠」或「搭五程送一程」當作履行社會責任（這只屬提高銷量的常規商業推廣策略）！</td>
+              </tr>
+              <tr>
+                <td><strong>3. 供應商 ＆ 4. 分銷商</strong></td>
+                <td>• <strong>對供應商</strong>：提出合理採購條款、不強逼降價、不收取高昂上架費、準時付清貨款。<br>• <strong>對分銷商</strong>：穩定供應優質貨品、提供銷售推廣支援及技術指導。</td>
+                <td>⚠️ 若供應商在原料中混入低質材料（不道德手法），會同時損害<strong>分銷商</strong>聲譽、<strong>顧客</strong>權益及整個行業形象而連累<strong>競爭對手</strong>！</td>
+              </tr>
+              <tr>
+                <td><strong>5. 東主（股東）＆ 6. 債權人</strong></td>
+                <td>• <strong>對東主（股東）</strong>：管理層決策應考慮企業長遠利益、適時公開資訊並顧及全體大小股東福祉。<br>• <strong>對債權人</strong>：準時還款付息，並提供準確財務資料（不誇大財務狀況）讓債權人評估風險。</td>
+                <td>❌ 課本第 78 頁「提提你」：<strong>向股東派發股息並不是對股東履行社會責任的例子</strong>（公司保留利潤作長遠發展而不派股息，亦非沒有履行社會責任）！<br>❌ 借錢給員工私人的朋友並非企業的債權人或持份者！</td>
+              </tr>
+              <tr>
+                <td><strong>7. 社區 ＆ 8. 政府 ＆ 9. 競爭對手</strong></td>
+                <td>• <strong>對社區</strong>：減少環境損害（用環保燃料、自攜杯折扣）、減少滋擾附近居民（深夜關霓虹燈招牌、不霸佔通道）、捐助公益及鼓勵義工。<br>• <strong>對政府</strong>：如實報稅、協助執法、響應政府呼籲（如聘用殘疾人士）。<br>• <strong>對競爭對手</strong>：公平競爭、尊重知識產權（不派商業間諜）、維護行業形象。</td>
+                <td>• <strong>商業道德 vs 法律</strong>：商業道德無明確定義；合法行為可能是不道德的，公眾可透過<strong>杯葛（罷買）</strong>制裁企業。<br>• <strong>加強商業道德意識六法</strong>：招聘簽道德聲明、<strong>由企業自行編製《專業操守》</strong>（政府不會編製，法例亦無強制要求）、道德培訓、獎懲機制、高層以身作則、採用廉署香港商業道德發展中心服務。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    stage.innerHTML = `
+      <div>
+        <div class="tool-tabs">
+          <button class="tt-btn ${curToolTab === 0 ? 'active' : ''}" onclick="setToolTab(0)">🌏 1. 香港經濟、《安排》、國際組織與外部因素表（第 1 課）</button>
+          <button class="tt-btn ${curToolTab === 1 ? 'active' : ''}" onclick="setToolTab(1)">🏢 2. 企業擁有權類型全景對比表（第 2 課）</button>
+          <button class="tt-btn ${curToolTab === 2 ? 'active' : ''}" onclick="setToolTab(2)">🌱 3. 九大持份者社會責任與商業道德速查表（第 3 課）</button>
+        </div>
+        ${bodyHtml}
+      </div>
+    `;
+  }
+
+  function setToolTab(t) {
+    curToolTab = t;
+    renderToolsView(document.getElementById("hubStage"));
+  }
+
+  // ==================== 渲染視圖 4：跨課綜合「商業顧問」三步診斷擂台 ====================
+  function renderCrossQuizView(stage) {
+    const item = crossCases[curCrossIdx];
+
+    let dotsHtml = "";
+    for (let i = 0; i < crossCases.length; i++) {
+      dotsHtml += `<button class="dot-btn ${i === curCrossIdx ? 'active' : ''}" onclick="goCrossCase(${i})">${i + 1}</button>`;
+    }
+
+    const buildStepCol = (qTitle, optsArr, sIdx) => {
+      const btns = optsArr.map((o, oIdx) => `
+        <button class="step-btn ${stepPicks[sIdx] === oIdx ? 'picked' : ''}" onclick="pickCrossStep(${sIdx}, ${oIdx})">👉 ${o.text}</button>
+      `).join("");
+      return `
+        <div class="step-col">
+          <div class="step-q">${qTitle}</div>
+          <div class="step-opts">${btns}</div>
+        </div>
+      `;
+    };
+
+    stage.innerHTML = `
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #e2e8f0;">
+          <div style="font-size:calc(18px * var(--scale)); font-weight:900; color:#1e3a8a;">🎯 ${item.title}</div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button class="helper-btn" onclick="autoSolveCross()">💡 示範三步滿分方案</button>
+            ${dotsHtml}
+          </div>
+        </div>
+
+        <div class="quiz-banner">
+          <span class="qb-tag">📌 ${item.tag}</span>
+          <div class="qb-stem">${item.desc}</div>
+        </div>
+
+        <div class="steps-grid">
+          ${buildStepCol(item.q1, item.opts1, 0)}
+          ${buildStepCol(item.q2, item.opts2, 1)}
+          ${buildStepCol(item.q3, item.opts3, 2)}
+        </div>
+
+        <div class="feedback-pop" id="crossFb"></div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:18px; padding-top:12px; border-top:2px solid #e2e8f0;">
+          <button class="detail-btn" style="width:auto;" onclick="goCrossCase(${Math.max(0, curCrossIdx - 1)})" ${curCrossIdx === 0 ? 'style="visibility:hidden"' : ''}>← 上一綜合個案</button>
+          <button class="launch-btn" style="width:auto; padding:10px 22px; background:linear-gradient(135deg,#2563eb,#0d9488);" onclick="goCrossCase(${(curCrossIdx + 1) % crossCases.length})">下一綜合個案 →</button>
+        </div>
+      </div>
+    `;
+
+    if (stepPicks[0] !== null && stepPicks[1] !== null && stepPicks[2] !== null) {
+      const fb = document.getElementById("crossFb");
+      fb.style.display = "block";
+      const ok0 = item.opts1[stepPicks[0]].ok;
+      const ok1 = item.opts2[stepPicks[1]].ok;
+      const ok2 = item.opts3[stepPicks[2]].ok;
+
+      if (ok0 && ok1 && ok2) {
+        fb.className = "feedback-pop fb-ok";
+        fb.innerHTML = `🏆 <strong>跨課三步策略分析全數精準命中！你已完全融會貫通《營商環境》全單元知識！</strong><br>${item.exp}`;
+      } else {
+        const st = document.getElementById("hubStage");
+        st.classList.remove("shake");
+        void st.offsetWidth;
+        st.classList.add("shake");
+        fb.className = "feedback-pop fb-err";
+        fb.innerHTML = `⚠️ <strong>部分步驟分析有誤：</strong> 第 1 步 [${ok0 ? '✓' : '✗'}] ｜ 第 2 步 [${ok1 ? '✓' : '✗'}] ｜ 第 3 步 [${ok2 ? '✓' : '✗'}]<br>${item.exp}`;
+      }
+    }
+  }
+
+  function goCrossCase(idx) {
+    curCrossIdx = idx;
+    stepPicks = [null, null, null];
+    renderCrossQuizView(document.getElementById("hubStage"));
+  }
+
+  function pickCrossStep(sIdx, oIdx) {
+    stepPicks[sIdx] = oIdx;
+    renderCrossQuizView(document.getElementById("hubStage"));
+  }
+
+  function autoSolveCross() {
+    const item = crossCases[curCrossIdx];
+    stepPicks[0] = item.opts1.findIndex(o => o.ok);
+    stepPicks[1] = item.opts2.findIndex(o => o.ok);
+    stepPicks[2] = item.opts3.findIndex(o => o.ok);
+    renderCrossQuizView(document.getElementById("hubStage"));
+  }
+
+  // 啟動總目錄頁
+  updateProgressBar();
+  renderHubStage();
+</script>
+</body>
+</html>

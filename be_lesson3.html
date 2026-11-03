@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企會財視覺互動學習平台｜第 3 課：商業道德與社會責任</title>
+  <style>
+    :root { --bg:#0f172a; --panel:#1e293b; --card:#ffffff; --text:#0f172a; --muted:#64748b; --blue:#2563eb; --indigo:#4f46e5; --teal:#0d9488; --green:#16a34a; --amber:#d97706; --red:#e11d48; --scale:1; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:"PingFang HK","Microsoft JhengHei","Noto Sans TC",sans-serif; user-select:none; }
+    body { background:var(--bg); color:var(--text); padding:12px; font-size:calc(16px * var(--scale)); line-height:1.55; }
+    .app { max-width:1060px; margin:0 auto; }
+    @keyframes popIn { 0%{transform:scale(0.94);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+    .pop { animation:popIn 0.22s ease-out; }
+    .shake { animation:shake 0.3s ease-in-out; }
+
+    /* 頂部遊戲化狀態列 */
+    .top-bar { background:linear-gradient(135deg,#0f766e,#1e3a8a,#4f46e5); border-radius:16px; padding:14px 20px; color:#fff; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; box-shadow:0 8px 20px rgba(0,0,0,0.35); }
+    .brand-title { font-size:calc(19.5px * var(--scale)); font-weight:900; display:flex; align-items:center; gap:8px; }
+    .stat-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .pill-stat { background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.25); padding:6px 12px; border-radius:30px; font-weight:800; font-size:calc(13px * var(--scale)); }
+    .ctrl-btn { background:#fbbf24; color:#0f172a; border:none; padding:7px 13px; border-radius:30px; font-weight:900; font-size:calc(13px * var(--scale)); cursor:pointer; transition:transform 0.15s; }
+    .ctrl-btn:hover { transform:scale(1.05); background:#fcd34d; }
+
+    /* 雙軌學習難度切換器 */
+    .diff-switcher {
+      display:inline-flex;
+      background:rgba(15, 23, 42, 0.75);
+      border:2px solid rgba(251, 191, 36, 0.65);
+      border-radius:30px;
+      padding:3px;
+      gap:4px;
+    }
+    .diff-btn {
+      border:none;
+      padding:5px 12px;
+      border-radius:24px;
+      font-weight:900;
+      font-size:calc(13px * var(--scale));
+      cursor:pointer;
+      background:transparent;
+      color:#cbd5e1;
+      transition:all 0.2s;
+    }
+    .diff-btn.active-basic {
+      background:#10b981;
+      color:#ffffff;
+      box-shadow:0 2px 8px rgba(16, 185, 129, 0.5);
+    }
+    .diff-btn.active-challenge {
+      background:#f59e0b;
+      color:#0f172a;
+      box-shadow:0 2px 8px rgba(245, 158, 11, 0.5);
+    }
+
+    /* 啟發式導學引導卡（只在基礎導學模式顯示） */
+    .scaffold-banner {
+      background:linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border:2px solid #34d399;
+      border-left:7px solid var(--green);
+      border-radius:14px;
+      padding:12px 16px;
+      margin-bottom:14px;
+      color:#064e3b;
+      font-size:calc(14.5px * var(--scale));
+      font-weight:800;
+      line-height:1.55;
+      text-align:left;
+    }
+    .scaffold-tag {
+      display:inline-block;
+      background:var(--green);
+      color:#fff;
+      font-size:calc(12px * var(--scale));
+      font-weight:900;
+      padding:2px 9px;
+      border-radius:20px;
+      margin-right:6px;
+      margin-bottom:3px;
+    }
+
+    /* 五大互動遊戲模式導航 */
+    .mode-nav { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:12px; }
+    @media(max-width:780px){ .mode-nav{grid-template-columns:repeat(2,1fr);} }
+    .mode-tab { background:var(--panel); border:2px solid #334155; border-radius:14px; padding:12px 8px; color:#cbd5e1; cursor:pointer; text-align:center; transition:all 0.2s; }
+    .mode-tab:hover { border-color:#60a5fa; color:#fff; transform:translateY(-2px); }
+    .mode-tab.active { background:linear-gradient(135deg,#0d9488,#2563eb); border-color:#99f6e4; color:#fff; box-shadow:0 6px 16px rgba(13,148,136,0.45); }
+    .mode-icon { font-size:calc(24px * var(--scale)); display:block; margin-bottom:4px; }
+    .mode-label { font-size:calc(14px * var(--scale)); font-weight:900; display:block; }
+    .mode-sub { font-size:calc(11.5px * var(--scale)); opacity:0.85; }
+
+    /* 主舞台 */
+    .stage { background:var(--card); border-radius:20px; padding:24px; min-height:530px; box-shadow:0 12px 30px rgba(0,0,0,0.4); display:flex; flex-direction:column; justify-content:space-between; }
+    .level-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px; border-bottom:2px solid #f1f5f9; padding-bottom:12px; }
+    .level-title { font-size:calc(18px * var(--scale)); font-weight:900; color:var(--indigo); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .mode-pill-indicator { font-size:calc(12px * var(--scale)); padding:3px 10px; border-radius:20px; font-weight:900; }
+    .mp-basic { background:#d1fae5; color:#065f46; border:1px solid #10b981; }
+    .mp-challenge { background:#fef3c7; color:#92400e; border:1px solid #f59e0b; }
+
+    .dots-nav { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+    .dot-btn { width:calc(36px * var(--scale)); height:calc(36px * var(--scale)); border-radius:10px; border:2px solid #cbd5e1; background:#f8fafc; font-weight:900; font-size:calc(14px * var(--scale)); cursor:pointer; color:var(--muted); }
+    .dot-btn.active { background:var(--indigo); color:#fff; border-color:var(--indigo); }
+    .dot-btn.done { background:#dcfce7; color:var(--green); border-color:var(--green); }
+
+    /* ================= 模式 1：視覺對比圖卡 ================= */
+    .visual-banner { text-align:center; margin-bottom:14px; }
+    .visual-topic-tag { display:inline-block; background:#ccfbf1; color:#115e59; padding:4px 14px; border-radius:20px; font-weight:900; font-size:calc(13.5px * var(--scale)); margin-bottom:6px; }
+    .visual-main-q { font-size:calc(21px * var(--scale)); font-weight:900; color:var(--text); }
+    .vs-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:12px 0; }
+    @media(max-width:700px){ .vs-grid{grid-template-columns:1fr;} }
+    .vs-card { border-radius:16px; padding:20px; position:relative; transition:transform 0.2s; }
+    .vs-card:hover { transform:translateY(-3px); }
+    .vs-true { background:linear-gradient(145deg,#f0fdf4,#dcfce7); border:3px solid #4ade80; }
+    .vs-false { background:linear-gradient(145deg,#fff1f2,#ffe4e6); border:3px solid #fb7185; }
+    .vs-badge { display:inline-block; padding:4px 12px; border-radius:20px; font-weight:900; font-size:calc(13px * var(--scale)); margin-bottom:10px; color:#fff; }
+    .vs-true .vs-badge { background:var(--green); }
+    .vs-false .vs-badge { background:var(--red); }
+    .vs-icon { font-size:calc(38px * var(--scale)); float:right; }
+    .vs-headline { font-size:calc(18px * var(--scale)); font-weight:900; margin-bottom:8px; }
+    .vs-true .vs-headline { color:#14532d; }
+    .vs-false .vs-headline { color:#881337; }
+    .vs-desc { font-size:calc(15px * var(--scale)); font-weight:700; color:#334155; }
+    .interactive-check-bar { background:#f8fafc; border:2px dashed #94a3b8; border-radius:14px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .quick-quiz-q { font-size:calc(15.5px * var(--scale)); font-weight:800; color:var(--text); }
+    .quick-btn { padding:8px 16px; border-radius:10px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:calc(14px * var(--scale)); cursor:pointer; transition:all 0.15s; }
+    .quick-btn:hover { background:#eff6ff; border-color:var(--blue); }
+
+    /* ================= 模式 2：街機式情境快閃分類 ================= */
+    .arcade-arena { text-align:center; max-width:820px; margin:0 auto; width:100%; }
+    .arcade-card { background:linear-gradient(135deg,#1e293b,#0f172a); color:#fff; border-radius:20px; padding:24px 22px; margin-bottom:16px; box-shadow:0 10px 25px rgba(15,23,42,0.25); border:2px solid #2dd4bf; }
+    .arcade-emoji { font-size:calc(44px * var(--scale)); display:block; margin-bottom:8px; }
+    .arcade-text { font-size:calc(19.5px * var(--scale)); font-weight:900; line-height:1.45; }
+    .arcade-highlight { color:#5eead4; text-decoration:underline; }
+    .category-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .category-grid.grid-3col { grid-template-columns:repeat(3,1fr); gap:12px; }
+    @media(max-width:680px){ .category-grid, .category-grid.grid-3col{grid-template-columns:1fr;} }
+    .cat-btn { padding:14px 12px; border-radius:14px; border:2px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-weight:900; font-size:calc(15.5px * var(--scale)); color:var(--text); transition:all 0.15s; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .cat-btn:hover { border-color:var(--teal); background:#f0fdfa; transform:scale(1.02); }
+    .cat-btn span.cat-emo { font-size:calc(24px * var(--scale)); }
+    .cat-sub-desc { font-size:calc(12px * var(--scale)); color:var(--muted); font-weight:800; margin-top:2px; line-height:1.35; }
+
+    /* ================= 模式 3：磁力積木砌答案 ================= */
+    .question-strip { background:#fffbeb; border-left:6px solid var(--amber); padding:14px 18px; border-radius:12px; font-size:calc(16px * var(--scale)); font-weight:900; color:#78350f; margin-bottom:12px; }
+    .tray-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px; }
+    .tray-box { background:#f1f5f9; border:3px dashed #64748b; border-radius:16px; padding:14px 16px; min-height:80px; margin-bottom:14px; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+    .tray-placeholder { color:var(--muted); font-weight:800; font-size:calc(14.5px * var(--scale)); }
+    .slot-chip { padding:9px 14px; border-radius:10px; font-weight:900; font-size:calc(14px * var(--scale)); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 10px rgba(0,0,0,0.12); }
+    .chip-step0 { background:var(--blue); }
+    .chip-step1 { background:var(--amber); }
+    .chip-step2 { background:var(--teal); }
+    .blocks-section-title { font-size:calc(14px * var(--scale)); font-weight:900; color:var(--indigo); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+    .blocks-pool { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px; }
+    .blocks-pool.pool-2col { grid-template-columns:repeat(2,1fr); }
+    @media(max-width:720px){ .blocks-pool, .blocks-pool.pool-2col{grid-template-columns:1fr;} }
+    .mag-block { padding:12px 14px; border-radius:12px; border:2px solid #cbd5e1; background:#fff; font-size:calc(14px * var(--scale)); font-weight:800; color:var(--text); cursor:pointer; text-align:left; transition:all 0.15s; box-shadow:0 3px 6px rgba(0,0,0,0.04); line-height:1.5; }
+    .mag-block:hover { border-color:var(--indigo); background:#eef2ff; transform:translateY(-2px); }
+    .mag-block.selected { background:#dbeafe; border-color:var(--blue); box-shadow:inset 0 0 0 2px var(--blue); }
+    .mag-block.selected-err { background:#ffe4e6; border-color:var(--red); box-shadow:inset 0 0 0 2px var(--red); }
+    .block-tag { display:inline-block; font-size:calc(11.5px * var(--scale)); font-weight:900; padding:2px 8px; border-radius:6px; margin-bottom:4px; }
+    .helper-btn { padding:6px 12px; border-radius:8px; border:1px solid var(--indigo); background:#eef2ff; color:var(--indigo); font-weight:800; font-size:calc(13px * var(--scale)); cursor:pointer; }
+    .helper-btn:hover { background:var(--indigo); color:#fff; }
+
+    /* ================= 模式 4：紅筆捉錯挑戰 ================= */
+    .paper-sheet { background:#fefce8; border:2px solid #fde047; border-radius:16px; padding:20px; margin-bottom:16px; }
+    .paper-instruction { font-size:calc(14px * var(--scale)); font-weight:900; color:var(--red); margin-bottom:10px; }
+    .sentence-chips-wrap { display:flex; flex-direction:column; gap:10px; }
+    .sentence-chip { padding:14px 16px; border-radius:12px; border:2px solid #cbd5e1; background:#fff; font-size:calc(15.5px * var(--scale)); font-weight:800; color:var(--text); cursor:pointer; transition:all 0.15s; display:flex; justify-content:space-between; align-items:center; gap:10px; line-height:1.5; }
+    .sentence-chip:hover { border-color:var(--red); background:#fff1f2; }
+    .sentence-chip.flaw-found { border-color:var(--red); background:#ffe4e6; color:#9f1239; text-decoration:line-through; }
+    .sentence-chip.good-clicked { border-color:var(--green); background:#dcfce7; color:#14532d; }
+
+    /* ================= 模式 5：互動消去法選擇題擂台 ================= */
+    .elim-stmt-row { display:flex; justify-content:space-between; align-items:center; gap:12px; background:#f8fafc; border:2px solid #cbd5e1; border-radius:12px; padding:12px 16px; margin-bottom:10px; flex-wrap:wrap; }
+    .elim-stmt-text { font-size:calc(15px * var(--scale)); font-weight:800; flex:1; min-width:240px; }
+    .elim-stmt-hint { display:block; font-size:calc(12.5px * var(--scale)); color:#047857; font-weight:800; margin-top:4px; }
+    .elim-toggles { display:flex; gap:6px; }
+    .elim-btn { padding:6px 12px; border-radius:8px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:calc(13.5px * var(--scale)); cursor:pointer; }
+    .elim-btn.t-true { background:var(--green); color:#fff; border-color:var(--green); }
+    .elim-btn.t-false { background:var(--red); color:#fff; border-color:var(--red); }
+    .mc-options-row { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:14px; }
+    @media(max-width:600px){ .mc-options-row{grid-template-columns:1fr;} }
+    .mc-card-btn { padding:14px 18px; border-radius:12px; border:2px solid #94a3b8; background:#fff; font-size:calc(16px * var(--scale)); font-weight:900; text-align:left; cursor:pointer; transition:all 0.2s; }
+    .mc-card-btn:hover { border-color:var(--blue); background:#eff6ff; }
+    .mc-card-btn.eliminated { opacity:0.28; text-decoration:line-through; background:#e2e8f0; border-color:#cbd5e1; }
+
+    .feedback-pop { margin-top:14px; padding:16px 18px; border-radius:14px; font-size:calc(15px * var(--scale)); font-weight:700; display:none; line-height:1.6; }
+    .fb-ok { background:#dcfce7; border:2px solid var(--green); color:#14532d; }
+    .fb-err { background:#ffe4e6; border:2px solid var(--red); color:#881337; }
+    .footer-nav { display:flex; justify-content:space-between; align-items:center; margin-top:18px; padding-top:12px; border-top:2px solid #f1f5f9; }
+    .nav-btn { padding:10px 20px; border-radius:10px; border:2px solid #cbd5e1; background:#fff; font-weight:900; font-size:calc(14.5px * var(--scale)); cursor:pointer; color:var(--indigo); }
+    .nav-btn:hover { background:#eef2ff; border-color:var(--indigo); }
+    .primary-action { background:var(--indigo); color:#fff; border-color:var(--indigo); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- 頂部狀態與雙軌學習難度切換器（預設開啟「🔥 實戰挑戰」） -->
+  <div class="top-bar">
+    <div class="brand-title">🌱 第 3 課：商業道德與社會責任</div>
+    <div class="stat-group">
+      <div class="diff-switcher" title="切換學習模式：預設為實戰挑戰；如需思維引導與精簡選項可切換至基礎導學">
+        <button class="diff-btn" id="btnBasicMode" onclick="setDifficulty(true)">🌱 基礎導學</button>
+        <button class="diff-btn active-challenge" id="btnChallengeMode" onclick="setDifficulty(false)">🔥 實戰挑戰</button>
+      </div>
+      <div class="pill-stat" id="comboBadge">🔥 連擊：0</div>
+      <div class="pill-stat" id="scoreBadge">⭐ 總分：0</div>
+      <button class="ctrl-btn" onclick="reshuffleAll()" title="重新隨機打亂所有題目與選項位置">🔀 洗牌</button>
+      <button class="ctrl-btn" onclick="toggleZoom()" id="zoomBtn">🔍 大字體：關</button>
+    </div>
+  </div>
+
+  <div class="mode-nav">
+    <button class="mode-tab active" onclick="switchMode(0)" id="mTab0"><span class="mode-icon">⚡</span><span class="mode-label">視覺對比卡</span><span class="mode-sub">30 秒破除迷思</span></button>
+    <button class="mode-tab" onclick="switchMode(1)" id="mTab1"><span class="mode-icon">🎮</span><span class="mode-label">情境快閃分類</span><span class="mode-sub">隨機次序判別責任</span></button>
+    <button class="mode-tab" onclick="switchMode(2)" id="mTab2"><span class="mode-icon">🧲</span><span class="mode-label">磁力積木砌答案</span><span class="mode-sub">隨機位置拼出滿分</span></button>
+    <button class="mode-tab" onclick="switchMode(3)" id="mTab3"><span class="mode-icon">🖍️</span><span class="mode-label">紅筆捉錯挑戰</span><span class="mode-sub">點擊答卷找出失分位</span></button>
+    <button class="mode-tab" onclick="switchMode(4)" id="mTab4"><span class="mode-icon">🏆</span><span class="mode-label">選擇題消去擂台</span><span class="mode-sub">動態組合劃走錯項</span></button>
+  </div>
+
+  <div class="stage" id="mainStage"></div>
+</div>
+
+<script>
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ==================== 雙軌學習難度狀態（預設為實戰挑戰模式） ====================
+  let isBasicMode = false;
+
+  function setDifficulty(basic) {
+    isBasicMode = basic;
+    document.getElementById("btnBasicMode").className = "diff-btn" + (basic ? " active-basic" : "");
+    document.getElementById("btnChallengeMode").className = "diff-btn" + (!basic ? " active-challenge" : "");
+    renderStage();
+  }
+
+  function getModeBadgeHtml() {
+    return isBasicMode
+      ? `<span class="mode-pill-indicator mp-basic">🌱 基礎導學模式（提供思維引導與精簡選項）</span>`
+      : `<span class="mode-pill-indicator mp-challenge">🔥 實戰挑戰模式（標準考試難度）</span>`;
+  }
+
+  // ==================== 1. 視覺對比圖卡（啟發式提問，不直接給答案） ====================
+  const vsCards = [
+    {
+      topic: "企業的九大持份者界定",
+      q: "誰才是企業的「持份者」？競爭對手、已離職前僱員算不算持份者？",
+      trueTitle: "九大持份者包含「競爭對手、分銷商及債權人」",
+      trueDesc: "持份者是指可影響企業決策和行為，並受企業決策影響的人士或團體，包括：東主或股東、僱員、顧客、供應商、分銷商、債權人、政府、社區及競爭對手。",
+      trueIcon: "🎯",
+      falseTitle: "已離職的前僱員 ＋ 借錢給員工私人的朋友屬持份者",
+      falseDesc: "常犯陷阱！① 已從公司離職的前僱員不再受企業決策影響；② 借錢給員工私人的朋友並非企業本身的債權人，兩者皆「不是」企業持份者！",
+      falseIcon: "🚫",
+      guideHint: "思考方向：回想「持份者」的定義（可影響企業決策並受企業決策影響的人士或團體）——同區同行的營商手法及定價策略，會否與企業互相影響？",
+      quizQ: "快測：在同一區經營同類型業務的「同行競爭對手」，是否屬於企業的持份者？",
+      rawOpts: [
+        { text: "屬於企業的持份者，因為同行的營商手法及行業聲譽會互相影響", ok: true },
+        { text: "不屬於企業的持份者，因為雙方並沒有直接的商業買賣合約", ok: false }
+      ]
+    },
+    {
+      topic: "甚麼才是真正的「企業社會責任」？",
+      q: "「遵守法例（如給最低工資）」或「提供消費折扣優惠」算不算履行社會責任？",
+      trueTitle: "行動必須「超越各項法例的基本要求」造福社會",
+      trueDesc: "例如：允許員工在惡劣天氣下在家工作、採用碳排放較少的環保燃料、以低於成本價售賣必需品予獨居長者、向自攜餐盒顧客提供減廢折扣。",
+      trueIcon: "🌱",
+      falseTitle: "只遵守法規底線 ＋ 節日減價促銷提高銷量",
+      falseDesc: "頭號陷阱！① 支付法定最低工資、配安全帶或給法定年假只屬「遵守法例」；② 周年慶八折或買五送一只屬「推廣策略」，兩者皆不算履行社會責任！",
+      falseIcon: "❌",
+      guideHint: "思考方向：判斷一項行動是否屬於「企業社會責任」，關鍵在於該行動是否「企業自發超越法例或政府政策的基本要求」。配合政府推行的計劃屬於自發公益還是配合政策？",
+      quizQ: "快測：專營巴士公司配合政府的「長者兩元乘車優惠計劃」提供票價優惠，這本身算不算履行社會責任？",
+      rawOpts: [
+        { text: "不算履行社會責任，因為這只是配合政府政策而非超越法規的自發公益行動", ok: true },
+        { text: "算履行社會責任，因為長者乘客在乘車時獲得了實質的票價減免", ok: false }
+      ]
+    },
+    {
+      topic: "對東主（股東）、供應商及分銷商的責任",
+      q: "公司「向普通股股東派發股息」，算不算對股東履行社會責任？",
+      trueTitle: "考慮長遠利益 ＋ 顧及全體大小股東福祉",
+      trueDesc: "管理層應考慮企業長遠增長（不為短期花紅犧牲長遠發展）、適時公開相關資訊，並顧及全體大小股東利益；對分銷商則應供應優質貨品及提供銷售指導。",
+      trueIcon: "📈",
+      falseTitle: "向股東派發股息 ＝ 對股東履行社會責任",
+      falseDesc: "重要概念：向股東派發股息「並不是」對股東履行社會責任的例子！公司保留利潤作長遠發展而不派股息，亦絕非不負責任！",
+      falseIcon: "⚠️",
+      guideHint: "思考方向：請區分「一般商業財務分配決定（如保留盈利作再投資而不派息）」與「忽視持份者長遠發展與福祉」的分別。",
+      quizQ: "快測：比較「沒有為僱員提供培訓機會」與「沒有向普通股股東派發股息」，哪項才屬於沒有履行社會責任？",
+      rawOpts: [
+        { text: "沒有為僱員提供培訓和事業發展的機會", ok: true },
+        { text: "在錄得盈利的年度沒有向普通股股東派發股息", ok: false }
+      ]
+    },
+    {
+      topic: "商業道德 vs 法律的區別",
+      q: "「法律上可接受的商業行為」是否必定合乎商業道德？",
+      trueTitle: "合法行為未必合乎道德 ＋ 商業道德無明確定義",
+      trueDesc: "商業道德並沒有清晰定義；售賣含有「未受法例管制但有害物質」的產品或誇大宣傳，雖未違法但屬不道德，公眾可透過「杯葛」制裁企業。",
+      trueIcon: "⚖️",
+      falseTitle: "商業道德是由社會清楚界定並有明確罰則的標準",
+      falseDesc: "常考陷阱！法律有清楚界定及法定懲罰，但商業道德「並沒有」清晰明確的定義，社會亦無列明不道德但合法行為的法定刑罰！",
+      falseIcon: "🛑",
+      guideHint: "思考方向：當某項行為並未觸犯現有法例（即合法）時，執法部門或法院能否強行拘捕或將企業清盤？消費者個人可以採取甚麼市場行動來表達不滿？",
+      quizQ: "快測：如果某企業的不道德營商手法並未觸犯現有法例（即合法），消費者可以如何制裁它？",
+      rawOpts: [
+        { text: "透過杯葛（罷買）該企業的產品及在網上公開劣評來打擊其銷量", ok: true },
+        { text: "由執法部門直接拘捕該企業東主並向法院申請強制清盤", ok: false }
+      ]
+    },
+    {
+      topic: "加強商業道德意識的方法與《專業操守》",
+      q: "企業的《專業操守》（道德守則）是由政府編製及法例強制要求的嗎？",
+      trueTitle: "由每家企業自行編製，為僱員提供規則和標準",
+      trueDesc: "加強道德意識六法：① 招聘簽道德聲明、② 企業自行編製《專業操守》、③ 提供道德培訓、④ 獎懲制度、⑤ 高層以身作則、⑥ 採用廉署香港商業道德發展中心服務。",
+      trueIcon: "📘",
+      falseTitle: "法例規定所有企業必須遵守「政府編製的專業操守」",
+      falseDesc: "核心概念：政府「不會」為企業編製專業操守，法例亦無強制要求；每家企業須根據自身業務需要自行編寫各自的專業操守！",
+      falseIcon: "🏢",
+      guideHint: "思考方向：回想《專業操守》的性質——它是香港法例強制規定的文件，還是企業內部為了規範員工日常行為標準而自行制定的守則？",
+      quizQ: "快測：企業自行編製《專業操守》（道德守則）的最主要原因是甚麼？",
+      rawOpts: [
+        { text: "為僱員在日常工作及面對利益衝突時提供明確的行為規則和標準", ok: true },
+        { text: "符合香港《公司條例》的強制規定，並即時減低生產成本", ok: false }
+      ]
+    }
+  ];
+
+  // ==================== 2. 街機式快閃分類（啟發式引導，不直接給答案） ====================
+  const arcadeCategoriesMeta = [
+    { key: "👥 對僱員", desc: "提供超越法例的工作環境、福利及事業發展" },
+    { key: "🛒 對顧客", desc: "確保產品安全、提供準確資訊及支援特殊需要顧客" },
+    { key: "🤝 供應／分銷", desc: "向貿易夥伴提供公平合理條款、優質貨品及推廣支援" },
+    { key: "🏦 股東／債權", desc: "顧及全體股東長遠利益，或向貸款人準時還款及提供真實財報" },
+    { key: "🌱 社區／環境", desc: "減少營運對周邊居民的滋擾、保護環境及支持公益" },
+    { key: "🏛️ 政府／對手", desc: "如實報稅、配合政府政策，或與同行公平競爭" },
+    { key: "⚖️ 僅守法(非CSR)", desc: "只達到法例規定的最低底線要求，並未超越法規" },
+    { key: "🏷️ 純促銷(非CSR)", desc: "旨在提高銷量的商業推廣折扣，或常規收費交易" }
+  ];
+
+  let arcadeItems = [
+    {
+      emoji: "⛈️",
+      text: "物流公司在颱風期間暫停戶外派件以保障速遞員安全，並為全職文員提供<span class='arcade-highlight'>每周四天半工作制及進修津貼</span>。",
+      guideHint: "思維引導：這些措施（惡劣天氣安全保障、四天半工作制、進修津貼）已超越勞工法例最低要求，請問受惠對象是企業的哪一類內部持份者？",
+      ans: "👥 對僱員",
+      basicPool: ["👥 對僱員", "⚖️ 僅守法(非CSR)", "🌱 社區／環境"],
+      exp: "提供安全健康的工作環境、改善生活的福利（彈性工作安排）及支援個人事業發展，屬於對「僱員」履行社會責任。"
+    },
+    {
+      emoji: "🦯",
+      text: "銀行分行專為視障及聽障人士設置<span class='arcade-highlight'>語音導航提款機及手語翻譯服務</span>，而電器商主動免費更換有過熱風險的充電器。",
+      guideHint: "思維引導：為有特殊需要的使用者提供無障礙支援，以及主動回收並更換有安全隱患的產品，這是保障哪一類持份者的權益？",
+      ans: "🛒 對顧客",
+      basicPool: ["🛒 對顧客", "🌱 社區／環境", "🏷️ 純促銷(非CSR)"],
+      exp: "確保產品安全、提供準確資訊、良好售後服務及「為有特殊需要的顧客提供支援」，屬於對「顧客」履行社會責任。"
+    },
+    {
+      emoji: "📱",
+      text: "家電生產商確保批發產品品質優良，並<span class='arcade-highlight'>派專員到各特約零售店指導店員</span>操作新產品；百貨公司亦<span class='arcade-highlight'>不向供應商濫收高昂上架費</span>。",
+      guideHint: "思維引導：生產商支援特約零售商（下游夥伴），以及百貨公司公平對待供貨商（上游夥伴），這涉及哪兩類商業合作持份者？",
+      ans: "🤝 供應／分銷",
+      basicPool: ["🤝 供應／分銷", "🛒 對顧客", "🏛️ 政府／對手"],
+      exp: "向「分銷商」提供銷售推廣支援及優質產品，以及對「供應商」提出合理條款（不強逼降價、不收高昂上架費、準時付款）。"
+    },
+    {
+      emoji: "🏦",
+      text: "公司管理層決策時考慮長遠增長以<span class='arcade-highlight'>保障全體大小股東長遠福祉</span>；同時向貸款銀行<span class='arcade-highlight'>準時還款並提供真實財務報表</span>以評估風險。",
+      guideHint: "思維引導：這項行動針對的是「向企業投入資本的擁有人」以及「借出資金予企業的貸款機構」，應歸入哪一組持份者？",
+      ans: "🏦 股東／債權",
+      basicPool: ["🏦 股東／債權", "🤝 供應／分銷", "🏛️ 政府／對手"],
+      exp: "顧及全體大小股東長遠福祉屬對「東主或股東」負責；準時還款及不誇大財務狀況屬對「債權人」履行社會責任。"
+    },
+    {
+      emoji: "🌙",
+      text: "食肆在<span class='arcade-highlight'>深夜十一時後關掉大型戶外燈箱</span>減少光污染、送貨時不阻塞行人路，並向<span class='arcade-highlight'>自攜餐盒顧客提供減廢折扣</span>及捐贈剩食。",
+      guideHint: "思維引導：減少光污染與阻塞行人路（減少對附近居民滋擾），以及鼓勵源頭減廢與捐贈剩食，這是對哪個範疇履行社會責任？",
+      ans: "🌱 社區／環境",
+      basicPool: ["🌱 社區／環境", "🛒 對顧客", "🏷️ 純促銷(非CSR)"],
+      exp: "減少對環境損害（減廢減排）、減少對附近居民滋擾（光污染、噪音、後巷衛生）及支持公益活動，屬對「社區」負責。"
+    },
+    {
+      emoji: "🕵️",
+      text: "企業如實向稅務局報稅、主動配合執法部門調查、響應政府呼籲<span class='arcade-highlight'>聘用更生及殘疾人士</span>，並尊重同行專利<span class='arcade-highlight'>絕不派商業間諜</span>。",
+      guideHint: "思維引導：前段涉及配合執法與公共政策當局，後段涉及與同業進行公平競爭，這對應哪兩類外部持份者？",
+      ans: "🏛️ 政府／對手",
+      basicPool: ["🏛️ 政府／對手", "👥 對僱員", "🌱 社區／環境"],
+      exp: "與執法人員合作、如實報稅及採用政府提倡的道德手法屬對「政府」負責；公平競爭及避免損害行業形象屬對「競爭對手」負責。"
+    },
+    {
+      emoji: "👷",
+      text: "製衣廠在勞工法例訂明的最後支薪期限（工資期屆滿後第七天）才向工人出糧，並按法例規定<span class='arcade-highlight'>支付法定最低工資及提供法定有薪年假</span>。",
+      guideHint: "思維引導：請思考——這家工廠的做法有沒有「超越」法例的基本要求，抑或只是剛好做到法例規定的最低底線？",
+      ans: "⚖️ 僅守法(非CSR)",
+      basicPool: ["⚖️ 僅守法(非CSR)", "👥 對僱員", "🏛️ 政府／對手"],
+      exp: "企業如果只遵守法規最低要求（如法定限期支薪、最低工資、配安全帶），並沒有超越法例底線，因此不算是履行了社會責任！"
+    },
+    {
+      emoji: "🎁",
+      text: "時裝店在<span class='arcade-highlight'>新年期間向顧客提供全場八折優惠</span>、超市推出儲印花換禮品推廣，以及清潔公司承接非牟利機構的常規收費清潔合約。",
+      guideHint: "思維引導：請思考——商戶在節日提供八折優惠及儲印花換禮品，其核心目的是為了造福社會公益，還是為了吸引顧客消費以提高營業額？",
+      ans: "🏷️ 純促銷(非CSR)",
+      basicPool: ["🏷️ 純促銷(非CSR)", "🛒 對顧客", "🌱 社區／環境"],
+      exp: "企業採用推廣策略（如提供折扣優惠）以提高銷量或進行常規付費商業交易，並不算履行社會責任！"
+    }
+  ];
+
+  // ==================== 3. 磁力積木砌答案（啟發式結構引導，不直接給答案） ====================
+  const legoChallenges = [
+    {
+      title: "砌答案挑戰 1：隱瞞產品安全隱患（不道德行為）對企業的負面影響（2 分）",
+      q: "議題：「綠苗寵物食品」得悉一批狗糧的防腐劑含量超出國際安全建議標準（雖未違反本地舊有法例），但管理層決定隱瞞並照常出售。解釋這決定對該公司可能帶來的一項不利影響。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：思考不道德營商行為一旦曝光，對企業商譽及顧客關係會造成甚麼打擊？ ➔ 🟨 第二步：扣連「隱瞞狗糧防腐劑超標被揭發」的個案背景 ➔ 🟩 第三步：推論寵物主人（消費者）會採取甚麼行動，從而如何影響公司銷量與盈利。",
+      step0: [
+        {
+          text: "💔 損害企業形象和聲譽，令顧客失去信心並減少銷量（或面臨寵物主人索償及降低員工士氣）",
+          easyText: "🟦 概念：損害企業形象和聲譽，令顧客失去信心並減少銷量",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "📉 公司的短期原材料採購成本會在消息隱瞞期間立即倍增",
+          easyText: "🟦 概念：公司的短期原材料採購成本會在隱瞞期間立即倍增",
+          ok: false, basicKeep: true, err: "隱瞞並繼續售賣現有存貨不會令短期採購成本倍增，題目問的是不道德決策對公司的「不利影響」！"
+        },
+        {
+          text: "🏛️ 特區政府會立即派員為該公司重新編寫一份《專業操守》",
+          easyText: "🟦 概念：特區政府會立即派員為該公司重新編寫一份《專業操守》",
+          ok: false, basicKeep: false, err: "政府不會為私營企業編製專業操守，每家企業須自行編寫！"
+        }
+      ],
+      step1: [
+        {
+          text: "📢 一旦公司隱瞞狗糧防腐劑超標的真相被傳媒或消費者委員會揭發，公眾會強烈譴責其罔顧動物健康的不道德行徑",
+          easyText: "🟨 起因：一旦隱瞞狗糧防腐劑超標被揭發，公眾會譴責其罔顧動物健康的不道德行徑",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🐶 因為本港市民飼養寵物的比例在過去五年持續上升",
+          easyText: "🟨 起因：因為本港市民飼養寵物的比例在過去五年持續上升",
+          ok: false, basicKeep: true, err: "沒有扣連題目「隱瞞狗糧防腐劑超標（不道德行為）」的個案背景！"
+        },
+        {
+          text: "📊 因為公司在本年度沒有向普通股股東派發中期股息",
+          easyText: "🟨 起因：因為公司在本年度沒有向普通股股東派發中期股息",
+          ok: false, basicKeep: false, err: "題目情境是隱瞞問題寵物食品，與派發股息無關！"
+        }
+      ],
+      step2: [
+        {
+          text: "🛒 導致寵物主人對品牌失去信任並發起杯葛（罷買）而轉購競爭對手產品，令銷售額與盈利急跌，甚至引發退貨潮及賠償訴訟。",
+          easyText: "🟩 結果：導致寵物主人失去信任並發起杯葛（罷買），令銷售額與盈利急跌。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏆 這會令該公司自動獲得漁農自然護理署頒發的優質商戶免稅額。",
+          easyText: "🟩 結果：令該公司自動獲得政府頒發的優質商戶免稅額。",
+          ok: false, basicKeep: false, err: "不道德營商行為絕不會獲得政府免稅獎勵！"
+        },
+        {
+          text: "👷 這會令公司內部員工的歸屬感與士氣大增，員工流失率跌至零。",
+          easyText: "🟩 結果：令公司內部員工的歸屬感與士氣大增，員工流失率跌至零。",
+          ok: false, basicKeep: true, err: "為不道德企業工作會令員工感到羞愧，導致士氣和忠誠度低落、流失率上升！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 2：在增加成本下仍對「僱員」履行社會責任的原因（2 分）",
+      q: "議題：「雲端數碼廣告公司」為減輕員工的工作壓力，決定在法定假期外增設每年五天全薪「身心健康假」及免費心理輔導服務。解釋該公司為何在增加營運成本下仍要推出以上措施。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：思考企業主動提供超越法例的福利予僱員，對員工心理與團隊穩定性有何正面作用？ ➔ 🟨 第二步：扣連「增設身心健康假及心理輔導」如何令員工感受到關懷 ➔ 🟩 第三步：推論高昂的員工士氣對廣告創作質素、工作效率及招聘培訓成本的長遠好處。",
+      step0: [
+        {
+          text: "🚀 提升僱員的士氣、歸屬感和忠誠度，從而提升生產力及減低員工流失率",
+          easyText: "🟦 概念：提升僱員的士氣、歸屬感和忠誠度，從而提升生產力及減低流失率",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "⚖️ 因為香港《僱傭條例》強制規定所有廣告公司必須提供每年五天身心健康假",
+          easyText: "🟦 概念：因為《僱傭條例》強制規定所有公司必須提供每年五天身心健康假",
+          ok: false, basicKeep: true, err: "香港法例並無規定提供身心健康假，這屬於超越法例最低要求的企業社會責任措施！"
+        },
+        {
+          text: "💰 因為增設全薪假期及免費輔導服務可以即時減少公司本年度的行政總開支",
+          easyText: "🟦 概念：因為增設全薪假期可以即時減少公司本年度的行政總開支",
+          ok: false, basicKeep: false, err: "題目已指明是在「增加營運成本」的情況下推出，並非即時減少開支！"
+        }
+      ],
+      step1: [
+        {
+          text: "😊 當員工感受到公司主動關顧其精神健康與工作生活平衡，會認為自己受到良好、公平及受尊重的對待",
+          easyText: "🟨 起因：當員工感受到公司主動關顧其精神健康與工作生活平衡，會認為自己受到良好對待",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏦 當公司向所有廣告客戶大幅調高服務收費三成",
+          easyText: "🟨 起因：當公司向所有廣告客戶大幅調高服務收費三成",
+          ok: false, basicKeep: false, err: "這與向內部員工提供額外福利措施無關！"
+        },
+        {
+          text: "📉 當公司將所有設計師的每月基本薪金削減兩成",
+          easyText: "🟨 起因：當公司將所有設計師的每月基本薪金削減兩成",
+          ok: false, basicKeep: true, err: "削減基本薪金與題目增設全薪福利的做法完全相反！"
+        }
+      ],
+      step2: [
+        {
+          text: "📈 最終能激勵員工更投入創作以提升廣告作品質素與工作效率，同時挽留優秀設計人才（減省重新招聘及培訓新人的成本）。",
+          easyText: "🟩 結果：能激勵員工提升作品質素與工作效率，同時挽留優秀人才（減省招聘培訓成本）。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🧾 令該廣告公司可以向稅務局申請永久豁免繳納法團利得稅。",
+          easyText: "🟩 結果：令該廣告公司可以向稅務局申請永久豁免繳納利得稅。",
+          ok: false, basicKeep: true, err: "改善員工福利並不會令企業獲豁免繳納利得稅！"
+        },
+        {
+          text: "🛑 確保該公司在香港廣告市場上不會再面對任何同行競爭對手。",
+          easyText: "🟩 結果：確保該公司在市場上不會再面對任何同行競爭對手。",
+          ok: false, basicKeep: false, err: "對僱員履行社會責任有助提升競爭力，但不會消除市場上的同業競爭！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 3：對「社區（附近居民及環境）」履行社會責任的方法（2 分）",
+      q: "議題：林先生在舊區住宅大廈的地舖開設「鮮味水產批發店」，日常需進行海產交收及清洗店面。試舉一例解釋林先生如何能確保店舖的運作可對「店舖附近的居民（社區）」履行社會責任。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：思考在住宅樓下經營水產店，對「附近居民（社區）」履行社會責任的核心原則是甚麼？（注意區分商業折扣或對政府／債權人的責任） ➔ 🟨 第二步：針對海產交收與清洗店面，提出具體的減滋擾措施 ➔ 🟩 第三步：說明該措施如何保障樓上居民的生活作息與環境衛生。",
+      step0: [
+        {
+          text: "🌱 盡量減少店舖營運對本地社區居民造成的滋擾及對周邊環境衛生的損害",
+          easyText: "🟦 概念：盡量減少店舖營運對社區居民造成的滋擾及對周邊環境衛生的損害",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏷️ 在中秋節期間向所有購買海產的餐廳客戶提供八五折批發優惠",
+          easyText: "🟦 概念：在節日期間向購買海產的餐廳客戶提供八五折批發優惠",
+          ok: false, basicKeep: true, err: "在銷售活動中提供折扣優惠以提高銷量屬於常規推廣策略，並不算履行社會責任！"
+        },
+        {
+          text: "🧾 如實向稅務局申報每年的批發利潤，並準時向銀行清還按揭貸款",
+          easyText: "🟦 概念：如實向稅務局報稅，並準時向銀行清還按揭貸款",
+          ok: false, basicKeep: false, err: "如實報稅是對「政府」的責任，準時還款是對「債權人」的責任，並非直接針對附近社區居民！"
+        }
+      ],
+      step1: [
+        {
+          text: "🔇 店舖在凌晨交收海產時控制推車及搬運聲浪、避免把發泡膠箱霸佔公共行人通道，並妥善處理魚腥污水與關閉刺眼招牌燈",
+          easyText: "🟨 做法：凌晨交收時控制聲浪、避免發泡膠箱霸佔行人路，並妥善處理污水與關閉刺眼招牌燈",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "📢 店舖每天清晨五時在住宅樓下用擴音器大聲叫賣特價海產",
+          easyText: "🟨 做法：每天清晨五時在住宅樓下用擴音器大聲叫賣特價海產",
+          ok: false, basicKeep: true, err: "清晨用擴音器叫賣會製造嚴重噪音污染，滋擾樓上居民睡眠！"
+        },
+        {
+          text: "👷 店舖在工資期屆滿後第七天內準時向搬運工人發放法定最低工資",
+          easyText: "🟨 做法：在法定限期內準時向搬運工人發放法定最低工資",
+          ok: false, basicKeep: false, err: "這是遵守對僱員的勞工法例底線，並非針對附近居民的社會責任！"
+        }
+      ],
+      step2: [
+        {
+          text: "🏡 從而避免噪音、光污染、阻塞通道及污水異味影響樓上及附近居民的作息與衛生，維護良好的睦鄰與社區關係。",
+          easyText: "🟩 結果：避免噪音、光污染、阻街及異味影響附近居民的作息與衛生，維護良好睦鄰關係。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏦 讓水產批發店可以向樓上住宅業主收取每月的街道清潔管理費。",
+          easyText: "🟩 結果：讓水產批發店可以向樓上住宅業主收取每月的清潔管理費。",
+          ok: false, basicKeep: true, err: "地舖商戶無權向樓上住宅業主收取管理費！"
+        },
+        {
+          text: "⚖️ 否則整棟住宅大廈的居民都會被食物環境衛生署檢控。",
+          easyText: "🟩 結果：否則整棟住宅大廈的居民都會被食環署檢控。",
+          ok: false, basicKeep: false, err: "不合常理的錯誤推論！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 4：企業因嚴重虧損「結業／清盤」對持份者的不利影響（2 分）",
+      q: "議題：「星光健身中心」長期以賒帳方式向器材商購買跑步機等設備，並聘有多名全職健身教練。近日該中心因嚴重虧損宣布即時結業並欠下巨額債務。除顧客和政府外，辨識一類受影響的持份者並說明結業對其帶來的一項不利影響。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：特別注意審題限制「除顧客和政府外」，從個案中找出另一類現職或有業務往來的持份者（注意已離職前僱員不算持份者） ➔ 🟨 第二步：扣連該持份者與健身中心的業務關係（賒帳賣器材或受僱任教） ➔ 🟩 第三步：推論健身中心欠債結業對該持份者造成的具體損失。",
+      step0: [
+        {
+          text: "🤝 供應商／債權人（健身器材供應商）或 僱員（在職全職健身教練）",
+          easyText: "🟦 持份者：供應商／債權人（健身器材商）或 僱員（在職全職教練）",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🛒 顧客（已預繳年費的健身會員）或 香港特區政府（稅務局）",
+          easyText: "🟦 持份者：顧客（已預繳年費的會員）或 香港特區政府",
+          ok: false, basicKeep: true, err: "審題陷阱！題目已明確列明「除顧客和政府外」，答顧客或政府一律得 0 分！"
+        },
+        {
+          text: "🚪 三年前已經從該健身中心辭職並轉行的前任接待員",
+          easyText: "🟦 持份者：三年前已經從該中心辭職轉行的前任接待員",
+          ok: false, basicKeep: false, err: "已離職的前僱員不再受企業決策影響，不屬於企業現時的持份者！"
+        }
+      ],
+      step1: [
+        {
+          text: "🏋️ 由於健身中心長期以賒帳方式向器材供應商購買設備，且在嚴重虧損結業時仍拖欠巨額貨款（或全職教練頓失工作職位）",
+          easyText: "🟨 起因：健身中心長期以賒帳向器材商購買設備，且結業時仍拖欠巨額貨款（或教練頓失職位）",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "📈 由於健身中心結業後其品牌價值會在市場上自動飆升十倍",
+          easyText: "🟨 起因：健身中心結業後其品牌價值會在市場上自動飆升十倍",
+          ok: false, basicKeep: true, err: "嚴重虧損結業不會令品牌價值飆升，且與供應商或僱員的不利影響無關！"
+        },
+        {
+          text: "🥤 由於器材供應商以後不能再到該健身中心免費使用浴室設施",
+          easyText: "🟨 起因：器材商以後不能再到該中心免費使用浴室設施",
+          ok: false, basicKeep: false, err: "沒有針對供應商的核心商業權益（應收貨款與未來訂單）作答！"
+        }
+      ],
+      step2: [
+        {
+          text: "💸 健身中心結業無力償債，會令器材供應商面臨無法收回貨款的壞帳財務損失及失去大客戶訂單（或令教練突然失業喪失穩定收入）。",
+          easyText: "🟩 結果：令器材商面臨無法收回貨款的壞帳損失及失去訂單（或令教練突然失業喪失收入）。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏛️ 健身器材供應商因此必須動用私人儲蓄替健身中心向政府繳納利得稅。",
+          easyText: "🟩 結果：器材商必須動用私人儲蓄替健身中心向政府繳納利得稅。",
+          ok: false, basicKeep: false, err: "供應商無須代倒閉的客戶繳納稅款！"
+        },
+        {
+          text: "🎉 令器材供應商的壞帳風險完全消失並即時獲得雙倍貨款賠償。",
+          easyText: "🟩 結果：令器材商的壞帳風險完全消失並即時獲得雙倍貨款賠償。",
+          ok: false, basicKeep: true, err: "客戶倒閉結業會令賒銷供應商蒙受壞帳損失，而非獲得雙倍賠償！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 5：加強企業員工「商業道德意識」的方法（2 分）",
+      q: "議題：林女士是一家上市醫療器材集團的行政總裁，她希望杜絕採購部員工收受供應商回佣等不道德行為，以維護集團財務及聲譽。試向林女士建議一項加強員工商業道德意識的方法並略作說明。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：回想企業內部加強員工商業道德意識的六大方法（注意《專業操守》是由企業自行編製還是政府編製？） ➔ 🟨 第二步：說明集團如何具體落實該項措施（如制訂防貪守則及舉辦培訓） ➔ 🟩 第三步：推論該措施如何協助員工建立道德標準並預防舞弊。",
+      step0: [
+        {
+          text: "📘 由集團自行編製《專業操守》守則、提供防貪道德培訓、設立獎懲機制或高層以身作則",
+          easyText: "🟦 概念：由集團自行編製《專業操守》守則、提供防貪道德培訓或設立獎懲機制",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏛️ 要求所有採購部員工嚴格遵從香港特區政府為該集團編寫的《專業操守》",
+          easyText: "🟦 概念：要求員工嚴格遵從香港特區政府為該集團編寫的《專業操守》",
+          ok: false, basicKeep: true, err: "政府不會為企業編製專業操守，每家企業須自行編寫各自的專業操守！"
+        },
+        {
+          text: "🎁 向所有購買醫療器材的診所提供九折優惠，並按法定最低工資支薪予倉務員",
+          easyText: "🟦 概念：向診所提供九折優惠，並按法定最低工資支薪予倉務員",
+          ok: false, basicKeep: false, err: "折扣屬商業促銷，付最低工資屬遵守法例，均非加強員工商業道德意識的內部管理措施！"
+        }
+      ],
+      step1: [
+        {
+          text: "📋 集團可就申報利益衝突、嚴禁收受回佣及招標保密自行編寫清晰的《專業操守》，並邀請廉署「香港商業道德發展中心」為各級員工舉辦培訓",
+          easyText: "🟨 做法：就申報利益衝突及嚴禁收受回佣自行編寫《專業操守》，並邀請廉署中心舉辦防貪培訓",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🤫 集團可指示會計部在年報中隱瞞採購開支以誇大年度純利",
+          easyText: "🟨 做法：指示會計部在年報中隱瞞採購開支以誇大年度純利",
+          ok: false, basicKeep: true, err: "隱瞞開支誇大純利本身就是欺騙股東與債權人的不道德及違法行為！"
+        },
+        {
+          text: "🕵️ 集團可聘請私家偵探竊聽同行競爭對手的研發會議紀錄",
+          easyText: "🟨 做法：聘請私家偵探竊聽同行競爭對手的研發會議紀錄",
+          ok: false, basicKeep: false, err: "竊取商業機密屬於嚴重不道德及違法行為！"
+        }
+      ],
+      step2: [
+        {
+          text: "🧭 從而在招聘及日常採購工作中為員工提供明確的道德規則和標準，並透過獎勵廉潔行為及處分違規員工，有效預防貪污舞弊醜聞。",
+          easyText: "🟩 結果：為員工提供明確的道德規則和標準，並透過獎懲機制有效預防貪污舞弊醜聞。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "📉 這會令集團的員工士氣低落及整體生產力即時暴跌。",
+          easyText: "🟩 結果：這會令集團的員工士氣低落及整體生產力即時暴跌。",
+          ok: false, basicKeep: true, err: "建立廉潔公平的道德文化有助提升而非降低員工士氣與企業聲譽！"
+        },
+        {
+          text: "💰 這可確保集團無須再向原材料供應商準時支付貨款。",
+          easyText: "🟩 結果：這可確保集團無須再向供應商準時支付貨款。",
+          ok: false, basicKeep: false, err: "無故拖欠供應商貨款本身就是違反商業道德與社會責任的行為！"
+        }
+      ]
+    }
+  ];
+
+  // ==================== 4. 紅筆捉錯挑戰（提供審題切入點，不直接劇透哪句錯） ====================
+  const redPenCases = [
+    {
+      title: "紅筆批改挑戰 1：找出答卷中混淆「真假社會責任」的錯句",
+      q: "議題：「耀華印刷公司」承接了多間慈善團體的常規收費海報印製服務，並在法例規定的最後限期（工資期屆滿後第七天）向印刷工人支薪；同時公司自資改用成本較高的無毒大豆油墨及再生紙印刷。判斷該公司哪些行為履行了社會責任。",
+      guideHint: "審題切入點：請以「是否自發超越法例基本要求及常規商業交易」為標準，檢視以下三句中哪一句誤將「常規收費交易」或「僅遵守法規底線」當成了履行社會責任。",
+      chips: [
+        {
+          text: "耀華自資改用較昂貴的無毒大豆油墨及再生紙印刷，減少化學污染並保障用家健康，履行了對環境及顧客的社會責任。",
+          easyText: "耀華自資改用無毒大豆油墨及再生紙印刷，履行了對環境及顧客的社會責任。",
+          isFlaw: false
+        },
+        {
+          text: "耀華承接慈善團體的常規收費印刷訂單，並在法定最後支薪限期（月底後第七天）向工人出糧，這兩項亦是履行社會責任的表現。",
+          easyText: "承接慈善團體的常規收費訂單，並在法定最後限期向工人出糧，亦屬履行社會責任。",
+          isFlaw: true
+        },
+        {
+          text: "若耀華想進一步對印刷工人履行社會責任，應改善車間抽風與隔音設備，並提供超越法例最低要求的醫療保障。",
+          easyText: "若想進一步對工人負責，應改善車間抽風設備，並提供超越法例要求的醫療保障。",
+          isFlaw: false
+        }
+      ],
+      exp: "<strong>• 失分原因</strong>：① 承接慈善團體的常規收費訂單只屬<strong>一般商業交易</strong>；② 在法定最後限期內支薪只屬<strong>遵守勞工法例的基本底線要求</strong>。兩者皆沒有超越法例要求，因此<strong>不算</strong>履行社會責任！"
+    },
+    {
+      title: "紅筆批改挑戰 2：找出答卷中關於「商業道德與專業操守」的錯句",
+      q: "議題：說明「商業道德」的特點，以及企業編製《專業操守》的規定。",
+      guideHint: "審題切入點：請從「商業道德是否有明確統一的定義」、「《專業操守》由誰編製（企業自行編製 vs 政府編製）」以及「合法與合乎道德的關係」三個角度，檢視哪一句有誤。",
+      chips: [
+        {
+          text: "商業道德是一套由社會清楚界定並有明確定義的標準，而且香港法例強制要求所有企業必須遵從政府編製的《專業操守》。",
+          easyText: "商業道德有清楚明確的定義，且法例強制所有企業必須遵從政府編製的《專業操守》。",
+          isFlaw: true
+        },
+        {
+          text: "在成熟的社會，違法行為通常都不合乎道德；但法律上可接受（合法）的商業行為卻可能是不道德的。",
+          easyText: "違法行為通常不合乎道德；但法律上可接受（合法）的行為卻可能是不道德的。",
+          isFlaw: false
+        },
+        {
+          text: "若企業採取不道德但合法的營商手法，公眾雖然不能採取法律行動，但可透過杯葛（罷買）其產品來制裁它。",
+          easyText: "若企業採取不道德但合法的手法，公眾可透過杯葛（罷買）其產品來制裁它。",
+          isFlaw: false
+        }
+      ],
+      exp: "<strong>• 失分原因</strong>：① 商業道德<strong>並沒有清晰明確的定義</strong>；② 香港法例<strong>並沒有強制要求</strong>所有企業編製專業操守；③ <strong>政府不會為企業編製《專業操守》</strong>，每家企業須自行編寫！"
+    },
+    {
+      title: "紅筆批改挑戰 3：找出答卷中關於「持份者與股東責任」的錯句",
+      q: "議題：說明企業持份者的範圍，以及企業對東主（股東）及債權人履行社會責任的方法。",
+      guideHint: "審題切入點：請檢視以下三個概念：① 債權人的社會責任要求；② 同行競爭對手是否屬於九大持份者；③ 不派發股息是否等同沒有對股東履行社會責任。",
+      chips: [
+        {
+          text: "企業對債權人履行社會責任的方法，包括準時還款付息，以及提供準確的財務資料（不誇大財務狀況）讓債權人評估借貸風險。",
+          easyText: "對債權人負責的方法，包括準時還款付息，以及提供準確的財務資料。",
+          isFlaw: false
+        },
+        {
+          text: "企業要對股東履行社會責任，管理層作出決策時應考慮企業的長遠利益，並顧及全體大小股東的福祉。",
+          easyText: "對股東負責，管理層決策時應考慮企業長遠利益，並顧及全體大小股東福祉。",
+          isFlaw: false
+        },
+        {
+          text: "同行競爭對手並不是企業的持份者；而且如果一家上市公司賺取利潤卻沒有向普通股股東派發股息，便屬於沒有對股東履行社會責任。",
+          easyText: "競爭對手不是企業的持份者；且公司賺取利潤卻不派發股息便屬於沒有對股東負責。",
+          isFlaw: true
+        }
+      ],
+      exp: "<strong>• 失分原因</strong>：① <strong>競爭對手是企業的九大持份者之一</strong>；② <strong>向股東派發股息並不是對股東履行社會責任的例子</strong>（公司保留利潤作長遠投資而不派息，亦非沒有履行社會責任）！"
+    }
+  ];
+
+  // ==================== 5. 互動消去法選擇題（導學提示改為思考方向提問，不直接劇透對錯） ====================
+  let elimMCs = [
+    {
+      title: "消去法實戰 1：企業持份者的精準辨識",
+      stem: "「極速電訊有限公司」是香港一家流動通訊網絡服務商。下列哪些人士屬於該公司的「持份者」？",
+      rawStmts: [
+        { text: "何先生：他私人借了一筆錢給在「極速電訊」任職門市經理的表弟支付買樓首期。", hint: "思考方向：請分辨債務關係——何先生借錢給員工私人買樓，他與「極速電訊」這家公司本身有沒有借貸關係？", isTrue: false, exp: "錯誤！何先生只是借錢給員工私人親屬，並非「極速電訊」本身的債權人或持份者。" },
+        { text: "張女士：她在股票市場買入並持有「極速電訊有限公司」5,000 股普通股股份。", hint: "思考方向：買入並持有公司普通股股份的人士，在公司中屬於甚麼身份？", isTrue: true, exp: "正確！張女士是該公司的股東（東主），屬於持份者。" },
+        { text: "王先生：他每月繳交服務月費，使用「極速電訊」的 5G 流動通訊服務。", hint: "思考方向：付費使用該公司電訊服務的人士，屬於哪一類持份者？", isTrue: true, exp: "正確！王先生是該公司的顧客，屬於持份者。" }
+      ]
+    },
+    {
+      title: "消去法實戰 2：分辨真正履行社會責任的商業行為",
+      stem: "下列哪項企業的行動屬於對持份者「履行社會責任」的例子？",
+      rawStmts: [
+        { text: "一家跨境巴士公司將車隊改用零排放的電動巴士，並向視障乘客提供語音報站及點字路線圖。", hint: "思考方向：改用零排放車種及為視障乘客提供無障礙支援，是否超越了法例的最低要求並造福環境與顧客？", isTrue: true, exp: "正確！主動採用環保車種及支援有特殊需要顧客，超越了法例最低要求，屬於對環境及顧客履行社會責任。" },
+        { text: "一家連鎖超市按《最低工資條例》向理貨員支付法定最低工資，並按法例為員工登記強積金計劃。", hint: "思考方向：支付法定最低工資及登記強積金，有否超越法例規定，抑或只是履行基本的守法義務？", isTrue: false, exp: "錯誤！支付法定最低工資及登記強積金只屬遵守法例基本要求，不算履行社會責任。" },
+        { text: "一家電器連鎖店在周年慶期間向顧客提供全場八折優惠，並向消費滿 $2,000 的顧客贈送現金券。", hint: "思考方向：商戶在周年慶提供折扣與現金券，其本質是為了吸引消費的推廣策略，還是超越法規的社會公益？", isTrue: false, exp: "錯誤！提供折扣優惠及現金券以提高銷量屬於常規商業推廣策略，不算履行社會責任。" }
+      ]
+    },
+    {
+      title: "消去法實戰 3：商業道德與《專業操守》的核心概念",
+      stem: "下列哪些有關「商業道德」及加強員工道德意識的陳述是正確的？",
+      rawStmts: [
+        { text: "法律上可接受（合法）的商業行為可能是不道德的；而不道德行為一旦曝光會損害企業聲譽並降低員工士氣。", hint: "思考方向：所有沒有犯法的行為是否就一定合乎道德？若企業被揭發不道德行為，對內部員工及外部聲譽有何影響？", isTrue: true, exp: "正確！合法行為未必合乎商業道德；不道德行為會打擊聲譽、銷量及員工士氣。" },
+        { text: "《專業操守》是由特區政府統一為各行業編製的，且法例強制規定所有香港企業必須採用。", hint: "思考方向：回想《專業操守》的來源——政府會否統一替私營企業編寫守則並以法例強制執行？", isTrue: false, exp: "錯誤！政府不會為企業編製《專業操守》，法例亦無強制規定，每家企業須自行編寫。" },
+        { text: "在招聘過程中要求新入職僱員簽署道德聲明、高層管理人員以身作則及處分違規員工，均有助加強商業道德意識。", hint: "思考方向：核對企業在招聘、高層管理示範及獎懲制度三方面的做法，是否屬於提升員工道德意識的有效方法？", isTrue: true, exp: "正確！這些均是企業加強員工商業道德意識的有效內部管理方法。" }
+      ]
+    },
+    {
+      title: "消去法實戰 4：不道德營商手法對多方持份者的連鎖影響",
+      stem: "某北海道牛乳批發商被揭發在其批發的「100% 純鮮奶」中摻入廉價植脂末及奶粉，以節省成本牟取暴利。下列哪些陳述是正確的？",
+      rawStmts: [
+        { text: "向該批發商採購鮮奶製作甜品的甜品店（分銷商）及購買甜品享用的顧客，均會受到負面影響。", hint: "思考方向：使用問題鮮奶製作甜品的下游商戶及最終消費者，其商譽及權益會否受損？", isTrue: true, exp: "正確！分銷商會遭顧客投訴而聲譽受損，顧客則未能獲得符合品質與成分標示的產品。" },
+        { text: "由於該不道德手法嚴重打擊消費者對進口鮮奶的信心並損害行業形象，行內其他誠實經營的鮮奶批發商（競爭對手）亦會受負面影響。", hint: "思考方向：當消費者對整個進口鮮奶行業失去信心時，行內其他同業的生意會否受到波及？", isTrue: true, exp: "正確！個別企業的不道德手法若損害整個行業的形象，行內所有競爭對手的業務都會受拖累。" },
+        { text: "該批發商的僱員可能會因自己正在為一家欺騙公眾的不道德企業工作而感到羞愧，導致士氣低落、生產力下降及流失率上升。", hint: "思考方向：當員工發現自己任職的公司透過造假欺騙公眾時，對其工作自豪感、士氣與去留決定有何影響？", isTrue: true, exp: "正確！企業的不道德行為會直接削弱內部僱員的士氣、歸屬感和忠誠度。" }
+      ]
+    }
+  ];
+
+  const allComboDefs = [
+    { order: 1, reqTrue: [1], reqFalse: [2, 3], text: "只有 (1)" },
+    { order: 2, reqTrue: [2], reqFalse: [1, 3], text: "只有 (2)" },
+    { order: 3, reqTrue: [3], reqFalse: [1, 2], text: "只有 (3)" },
+    { order: 4, reqTrue: [1, 2], reqFalse: [3], text: "只有 (1) 及 (2)" },
+    { order: 5, reqTrue: [1, 3], reqFalse: [2], text: "只有 (1) 及 (3)" },
+    { order: 6, reqTrue: [2, 3], reqFalse: [1], text: "只有 (2) 及 (3)" },
+    { order: 7, reqTrue: [1, 2, 3], reqFalse: [], text: "(1)、(2) 及 (3)" }
+  ];
+
+  function prepareDynamicMC(mcItem) {
+    const shuffled = shuffle(mcItem.rawStmts);
+    mcItem.stmts = shuffled.map((s, idx) => ({
+      id: idx + 1,
+      text: `(${idx + 1}) ${s.text}`,
+      hint: s.hint,
+      isTrue: s.isTrue,
+      exp: s.exp
+    }));
+    const trueIds = mcItem.stmts.filter(s => s.isTrue).map(s => s.id);
+    const correctCombo = allComboDefs.find(c =>
+      c.reqTrue.length === trueIds.length && c.reqTrue.every(id => trueIds.includes(id))
+    );
+    const wrongPool = shuffle(allComboDefs.filter(c => c !== correctCombo)).slice(0, 3);
+    const chosenCombos = [correctCombo, ...wrongPool].sort((a, b) => a.order - b.order);
+    const letters = ["A", "B", "C", "D"];
+    mcItem.options = chosenCombos.map((c, idx) => ({
+      label: `${letters[idx]}. ${c.text}`,
+      reqTrue: c.reqTrue,
+      reqFalse: c.reqFalse
+    }));
+    mcItem.ansIdx = chosenCombos.indexOf(correctCombo);
+  }
+
+  function randomizeAllData() {
+    vsCards.forEach(c => { c.quizOpts = shuffle(c.rawOpts); });
+    arcadeItems = shuffle(arcadeItems);
+    legoChallenges.forEach(ch => {
+      ch.step0 = shuffle(ch.step0);
+      ch.step1 = shuffle(ch.step1);
+      ch.step2 = shuffle(ch.step2);
+    });
+    redPenCases.forEach(c => { c.chips = shuffle(c.chips); });
+    elimMCs = shuffle(elimMCs);
+    elimMCs.forEach(m => prepareDynamicMC(m));
+  }
+
+  let curMode = 0;
+  let subIdx = [0, 0, 0, 0, 0];
+  let doneMap = {};
+  let score = 0;
+  let combo = 0;
+  let isZoom = false;
+  let legoPicked = [null, null, null];
+  let elimState = { 1: null, 2: null, 3: null };
+
+  function reshuffleAll() {
+    randomizeAllData();
+    legoPicked = [null, null, null];
+    elimState = { 1: null, 2: null, 3: null };
+    renderStage();
+  }
+
+  function toggleZoom() {
+    isZoom = !isZoom;
+    document.documentElement.style.setProperty('--scale', isZoom ? '1.18' : '1');
+    document.getElementById("zoomBtn").innerText = isZoom ? "🔍 大字體：開" : "🔍 大字體：關";
+  }
+
+  function addScore(pts, key) {
+    combo++;
+    if (!doneMap[key]) { doneMap[key] = true; score += pts; }
+    updateTopBar();
+  }
+
+  function breakCombo() {
+    combo = 0;
+    updateTopBar();
+    const st = document.getElementById("mainStage");
+    st.classList.remove("shake");
+    void st.offsetWidth;
+    st.classList.add("shake");
+  }
+
+  function updateTopBar() {
+    document.getElementById("comboBadge").innerText = `🔥 連擊：${combo}`;
+    document.getElementById("scoreBadge").innerText = `⭐ 總分：${score}`;
+  }
+
+  function switchMode(m) {
+    curMode = m;
+    for (let i = 0; i < 5; i++) {
+      document.getElementById(`mTab${i}`).className = "mode-tab" + (i === m ? " active" : "");
+    }
+    legoPicked = [null, null, null];
+    elimState = { 1: null, 2: null, 3: null };
+    renderStage();
+  }
+
+  function goSub(idx) {
+    subIdx[curMode] = idx;
+    legoPicked = [null, null, null];
+    elimState = { 1: null, 2: null, 3: null };
+    renderStage();
+  }
+
+  function nextOrSwitch(maxLen, nextModeIdx) {
+    if (subIdx[curMode] < maxLen - 1) goSub(subIdx[curMode] + 1);
+    else switchMode(nextModeIdx);
+  }
+
+  function moveSub(delta, maxLen) {
+    let next = subIdx[curMode] + delta;
+    if (next >= 0 && next < maxLen) goSub(next);
+  }
+
+  function buildDots(total) {
+    let html = "";
+    for (let i = 0; i < total; i++) {
+      const k = `${curMode}_${i}`;
+      const cls = (i === subIdx[curMode]) ? "dot-btn active" : (doneMap[k] ? "dot-btn done" : "dot-btn");
+      html += `<button class="${cls}" onclick="goSub(${i})">${i + 1}</button>`;
+    }
+    return html;
+  }
+
+  function renderStage() {
+    const stage = document.getElementById("mainStage");
+    stage.classList.remove("pop");
+    void stage.offsetWidth;
+    stage.classList.add("pop");
+    if (curMode === 0) renderVisualMode(stage);
+    else if (curMode === 1) renderArcadeMode(stage);
+    else if (curMode === 2) renderLegoMode(stage);
+    else if (curMode === 3) renderRedPenMode(stage);
+    else if (curMode === 4) renderElimMode(stage);
+  }
+
+  // ==================== 渲染模式 1：視覺對比圖卡 ====================
+  function renderVisualMode(stage) {
+    const idx = subIdx[0];
+    const item = vsCards[idx];
+    const btns = item.quizOpts.map((opt, oIdx) =>
+      `<button class="quick-btn" onclick="checkVisualQuiz(${oIdx})">${opt.text}</button>`
+    ).join("");
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner" style="margin-top:10px; margin-bottom:4px;">
+        <span class="scaffold-tag">🌱 導學思考引導</span>
+        ${item.guideHint}
+      </div>
+    ` : '';
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">⚡ 視覺對比圖卡 ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(vsCards.length)}</div>
+        </div>
+        <div class="visual-banner">
+          <span class="visual-topic-tag">${item.topic}</span>
+          <div class="visual-main-q">${item.q}</div>
+        </div>
+        <div class="vs-grid">
+          <div class="vs-card vs-true">
+            <span class="vs-icon">${item.trueIcon}</span>
+            <span class="vs-badge">🟢 核心真相（得分位）</span>
+            <div class="vs-headline">${item.trueTitle}</div>
+            <div class="vs-desc">${item.trueDesc}</div>
+          </div>
+          <div class="vs-card vs-false">
+            <span class="vs-icon">${item.falseIcon}</span>
+            <span class="vs-badge">🔴 常犯誤區（失分陷阱）</span>
+            <div class="vs-headline">${item.falseTitle}</div>
+            <div class="vs-desc">${item.falseDesc}</div>
+          </div>
+        </div>
+        ${scaffoldHtml}
+        <div class="interactive-check-bar">
+          <span class="quick-quiz-q">💡 ${item.quizQ}</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">${btns}</div>
+        </div>
+        <div class="feedback-pop" id="visFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${vsCards.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一張圖卡</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${vsCards.length}, 1)">
+          ${idx === vsCards.length - 1 ? '進入「情境快閃分類」 →' : '下一張圖卡 →'}
+        </button>
+      </div>
+    `;
+  }
+
+  function checkVisualQuiz(chosenIdx) {
+    const idx = subIdx[0];
+    const item = vsCards[idx];
+    if (item.quizOpts[chosenIdx].ok) {
+      addScore(10, `0_${idx}`);
+      renderVisualMode(document.getElementById("mainStage"));
+      const fb = document.getElementById("visFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = "🎉 <strong>一擊即中！（+10 分）</strong> 你已成功掌握這張圖卡的核心對比！";
+    } else {
+      breakCombo();
+      const fb = document.getElementById("visFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = "⚠️ <strong>再看一次左方綠色卡！</strong> 小心不要跌入右方紅色卡的常見陷阱！";
+    }
+  }
+
+  // ==================== 渲染模式 2：街機式情境快閃分類 ====================
+  function renderArcadeMode(stage) {
+    const idx = subIdx[1];
+    const item = arcadeItems[idx];
+
+    const visibleCats = isBasicMode
+      ? arcadeCategoriesMeta.filter(c => item.basicPool.includes(c.key))
+      : arcadeCategoriesMeta;
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner">
+        <span class="scaffold-tag">🌱 導學思維引導</span>
+        ${item.guideHint}（已為你縮小範圍至 3 個相關類別，並附設界定標準）
+      </div>
+    ` : '';
+
+    const catBtns = visibleCats.map(catObj => {
+      const icon = catObj.key.split(" ")[0];
+      const name = catObj.key.split(" ")[1];
+      return `
+        <button class="cat-btn" onclick="checkArcade('${catObj.key}')">
+          <span class="cat-emo">${icon}</span>
+          <span>${name}</span>
+          ${isBasicMode ? `<span class="cat-sub-desc">${catObj.desc}</span>` : ''}
+        </button>
+      `;
+    }).join("");
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🎮 情境快閃分類 ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(arcadeItems.length)}</div>
+        </div>
+        <div class="arcade-arena">
+          ${scaffoldHtml}
+          <div class="arcade-card">
+            <span class="arcade-emoji">${item.emoji}</span>
+            <div class="arcade-text">${item.text}</div>
+          </div>
+          <div class="category-grid ${isBasicMode ? 'grid-3col' : ''}">${catBtns}</div>
+          <div class="feedback-pop" id="arcFb" style="text-align:left;"></div>
+        </div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${arcadeItems.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一情境</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${arcadeItems.length}, 2)">
+          ${idx === arcadeItems.length - 1 ? '進入「磁力積木砌答案」 →' : '下一情境 →'}
+        </button>
+      </div>
+    `;
+  }
+
+  function checkArcade(chosenCat) {
+    const idx = subIdx[1];
+    const item = arcadeItems[idx];
+    if (chosenCat === item.ans) {
+      addScore(15, `1_${idx}`);
+      renderArcadeMode(document.getElementById("mainStage"));
+      const fb = document.getElementById("arcFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `🎯 <strong>快閃分類正確：${item.ans}！（+15 分）</strong><br>${item.exp}`;
+    } else {
+      breakCombo();
+      const fb = document.getElementById("arcFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = `❌ <strong>你選了「${chosenCat}」，再想一想！</strong> 留意藍字行動是針對哪類持份者，抑或只是守法／促銷？`;
+    }
+  }
+
+  // ==================== 渲染模式 3：磁力積木砌答案 ====================
+  function renderLegoMode(stage) {
+    const idx = subIdx[2];
+    const item = legoChallenges[idx];
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner">
+        <span class="scaffold-tag">🌱 導學答題思維引導</span>
+        ${item.guideHint}<br>
+        ✨ <strong>導學支援</strong>：每步已精簡字數並縮小至 2 個核心選項，點選後會<strong>即時回饋你所選積木是否合乎邏輯</strong>！
+      </div>
+    ` : '';
+
+    let trayHtml = "";
+    if (legoPicked[0] === null && legoPicked[1] === null && legoPicked[2] === null) {
+      trayHtml = `<span class="tray-placeholder">👇 請依序點擊下方「🟦 概念」＋「🟨 起因／做法」＋「🟩 結果」拼出滿分答案</span>`;
+    } else {
+      const colors = ["chip-step0", "chip-step1", "chip-step2"];
+      const stepLabels = ["🟦 概念", "🟨 起因", "🟩 結果"];
+      legoPicked.forEach((pk, sIdx) => {
+        if (pk !== null) {
+          const obj = item[`step${sIdx}`][pk];
+          const txt = isBasicMode ? obj.easyText : obj.text;
+          trayHtml += `<span class="slot-chip ${colors[sIdx]}" onclick="removeLego(${sIdx})">${stepLabels[sIdx]}：${txt} ✖</span>`;
+        }
+      });
+    }
+
+    const buildPool = (stepArr, sIdx, tagLabel, tagBg, tagColor) => {
+      const visibleArr = isBasicMode ? stepArr.filter(b => b.basicKeep) : stepArr;
+      return visibleArr.map((blk) => {
+        const origIdx = stepArr.indexOf(blk);
+        const isSel = (legoPicked[sIdx] === origIdx);
+        let selCls = "";
+        if (isSel) {
+          selCls = (isBasicMode && !blk.ok) ? "selected-err" : "selected";
+        }
+        const displayTxt = isBasicMode ? blk.easyText : blk.text;
+        let statusTag = `${tagLabel}`;
+        if (isSel) {
+          statusTag += isBasicMode ? (blk.ok ? ' ✅ 邏輯正確' : ' ❌ 再想一想') : ' ✓ 已選';
+        }
+        return `
+          <button class="mag-block ${selCls}" onclick="pickLego(${sIdx}, ${origIdx})">
+            <span class="block-tag" style="background:${tagBg}; color:${tagColor};">${statusTag}</span>
+            <div>${displayTxt}</div>
+          </button>
+        `;
+      }).join("");
+    };
+
+    const getStepInlineFeedback = (sIdx) => {
+      if (!isBasicMode || legoPicked[sIdx] === null) return "";
+      const pickedObj = item[`step${sIdx}`][legoPicked[sIdx]];
+      return pickedObj.ok
+        ? `<span style="color:#16a34a; font-size:calc(12.5px * var(--scale));">✅ 此步推論正確！</span>`
+        : `<span style="color:#e11d48; font-size:calc(12.5px * var(--scale));">❌ ${pickedObj.err}</span>`;
+    };
+
+    const poolGridClass = isBasicMode ? "blocks-pool pool-2col" : "blocks-pool";
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🧲 ${item.title} ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">
+            <button class="helper-btn" onclick="autoFillCorrectLego()">💡 示範滿分拼法</button>
+            ${buildDots(legoChallenges.length)}
+          </div>
+        </div>
+        ${scaffoldHtml}
+        <div class="question-strip">${item.q}</div>
+        <div class="tray-header">
+          <span style="font-size:calc(13.5px * var(--scale)); font-weight:900;">📥 你的磁力答題槽：</span>
+          <button class="helper-btn" onclick="resetAndShuffleLego()">🔄 清空並重新隨機排列積木</button>
+        </div>
+        <div class="tray-box">${trayHtml}</div>
+
+        <div class="blocks-section-title">
+          <span>1️⃣ 第一步：點選「概念標題／持份者辨識積木」［佔 1 分］</span>
+          ${getStepInlineFeedback(0)}
+        </div>
+        <div class="${poolGridClass}">${buildPool(item.step0, 0, "🟦 概念標題［1 分］", "#dbeafe", "#1e3a8a")}</div>
+
+        <div class="blocks-section-title">
+          <span>2️⃣ 第二步：點選「情境起因／具體做法積木」［扣連個案背景］</span>
+          ${getStepInlineFeedback(1)}
+        </div>
+        <div class="${poolGridClass}">${buildPool(item.step1, 1, "🟨 情境起因／做法", "#fef3c7", "#92400e")}</div>
+
+        <div class="blocks-section-title">
+          <span>3️⃣ 第三步：點選「商業結果／持份者影響積木」［完成因果闡釋，佔 1 分］</span>
+          ${getStepInlineFeedback(2)}
+        </div>
+        <div class="${poolGridClass}">${buildPool(item.step2, 2, "🟩 結果影響［1 分］", "#ccfbf1", "#115e59")}</div>
+
+        <div class="feedback-pop" id="legoFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${legoChallenges.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一題</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${legoChallenges.length}, 3)">
+          ${idx === legoChallenges.length - 1 ? '進入「紅筆捉錯挑戰」 →' : '下一題 →'}
+        </button>
+      </div>
+    `;
+
+    if (legoPicked[0] !== null && legoPicked[1] !== null && legoPicked[2] !== null) evaluateLego();
+  }
+
+  function pickLego(sIdx, bIdx) { legoPicked[sIdx] = bIdx; renderLegoMode(document.getElementById("mainStage")); }
+  function removeLego(sIdx) { legoPicked[sIdx] = null; renderLegoMode(document.getElementById("mainStage")); }
+  function resetAndShuffleLego() {
+    const ch = legoChallenges[subIdx[2]];
+    ch.step0 = shuffle(ch.step0);
+    ch.step1 = shuffle(ch.step1);
+    ch.step2 = shuffle(ch.step2);
+    legoPicked = [null, null, null];
+    renderLegoMode(document.getElementById("mainStage"));
+  }
+  function autoFillCorrectLego() {
+    const item = legoChallenges[subIdx[2]];
+    legoPicked[0] = item.step0.findIndex(b => b.ok);
+    legoPicked[1] = item.step1.findIndex(b => b.ok);
+    legoPicked[2] = item.step2.findIndex(b => b.ok);
+    renderLegoMode(document.getElementById("mainStage"));
+  }
+
+  function evaluateLego() {
+    const idx = subIdx[2];
+    const item = legoChallenges[idx];
+    const b0 = item.step0[legoPicked[0]], b1 = item.step1[legoPicked[1]], b2 = item.step2[legoPicked[2]];
+    const fb = document.getElementById("legoFb");
+    fb.style.display = "block";
+    if (b0.ok && b1.ok && b2.ok) {
+      addScore(20, `2_${idx}`);
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `🏆 <strong>磁力積木拼合完美！穩奪 2 / 2 分滿分！（+20 分）</strong><br>✨ <strong>完整標準答案</strong>：「<strong>${b0.text}［1 分］</strong>：<strong>${b1.text}，${b2.text}［1 分］</strong>」`;
+    } else {
+      breakCombo();
+      let errs = [];
+      if (!b0.ok) errs.push(`• 🟦 <strong>概念積木有誤</strong>：${b0.err}`);
+      if (!b1.ok) errs.push(`• 🟨 <strong>起因／做法積木有誤</strong>：${b1.err}`);
+      if (!b2.ok) errs.push(`• 🟩 <strong>結果積木有誤</strong>：${b2.err}`);
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = `⚠️ <strong>積木組合存在失分陷阱（請直接點擊下方正確積木替換）：</strong><br>${errs.join("<br>")}`;
+    }
+  }
+
+  // ==================== 渲染模式 4：紅筆捉錯挑戰 ====================
+  function renderRedPenMode(stage) {
+    const idx = subIdx[3];
+    const item = redPenCases[idx];
+    const nums = ["①", "②", "③"];
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner">
+        <span class="scaffold-tag">🌱 導學審題切入點</span>
+        ${item.guideHint}（已為你精簡句子字數，方便檢視邏輯）
+      </div>
+    ` : '';
+
+    const chipsHtml = item.chips.map((ch, cIdx) => {
+      const displayTxt = isBasicMode ? ch.easyText : ch.text;
+      return `
+        <div class="sentence-chip" id="rpChip_${cIdx}" onclick="checkRedPen(${cIdx})">
+          <span>${nums[cIdx]} ${displayTxt}</span>
+          <span style="font-size:calc(13px * var(--scale)); color:var(--red); font-weight:900; white-space:nowrap;">🖍️ 點此捉錯</span>
+        </div>
+      `;
+    }).join("");
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🖍️ ${item.title} ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(redPenCases.length)}</div>
+        </div>
+        ${scaffoldHtml}
+        <div class="question-strip">${item.q}</div>
+        <div class="paper-sheet">
+          <div class="paper-instruction">🖍️ 句子次序已隨機排列，請點擊藏有嚴重概念錯誤的那一句：</div>
+          <div class="sentence-chips-wrap">${chipsHtml}</div>
+        </div>
+        <div class="feedback-pop" id="rpFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${redPenCases.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一份答卷</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${redPenCases.length}, 4)">
+          ${idx === redPenCases.length - 1 ? '進入「選擇題消去擂台」 →' : '下一份答卷 →'}
+        </button>
+      </div>
+    `;
+  }
+
+  function checkRedPen(cIdx) {
+    const idx = subIdx[3];
+    const item = redPenCases[idx];
+    const ch = item.chips[cIdx];
+    const nums = ["①", "②", "③"];
+    const el = document.getElementById(`rpChip_${cIdx}`);
+    const fb = document.getElementById("rpFb");
+    fb.style.display = "block";
+    if (ch.isFlaw) {
+      el.className = "sentence-chip flaw-found";
+      addScore(20, `3_${idx}`);
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `<strong>🖍️ 紅筆精準捉錯（第 ${nums[cIdx]} 句得 0 分）！</strong><br>${item.exp}`;
+    } else {
+      el.className = "sentence-chip good-clicked";
+      breakCombo();
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = `⭕ <strong>第 ${nums[cIdx]} 句是完全正確的得分句！</strong> 請再檢查其餘句子找出真正的概念陷阱！`;
+    }
+  }
+
+  // ==================== 渲染模式 5：互動消去法選擇題擂台 ====================
+  function renderElimMode(stage) {
+    const idx = subIdx[4];
+    const item = elimMCs[idx];
+    const stmtsHtml = item.stmts.map(st => {
+      const curVal = elimState[st.id];
+      return `
+        <div class="elim-stmt-row">
+          <div class="elim-stmt-text">
+            ${st.text}
+            ${isBasicMode ? `<span class="elim-stmt-hint">🤔 ${st.hint}</span>` : ''}
+          </div>
+          <div class="elim-toggles">
+            <button class="elim-btn ${curVal === true ? 't-true' : ''}" onclick="toggleElim(${st.id}, true)">⭕ 正確</button>
+            <button class="elim-btn ${curVal === false ? 't-false' : ''}" onclick="toggleElim(${st.id}, false)">❌ 錯誤</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    const optsHtml = item.options.map((opt, oIdx) => {
+      let isElim = false;
+      [1, 2, 3].forEach(sId => {
+        if (elimState[sId] === true && opt.reqFalse.includes(sId)) isElim = true;
+        if (elimState[sId] === false && opt.reqTrue.includes(sId)) isElim = true;
+      });
+      return `<button class="mc-card-btn ${isElim ? 'eliminated' : ''}" onclick="checkElimMc(${oIdx})">${opt.label}</button>`;
+    }).join("");
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🏆 ${item.title} ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(elimMCs.length)}</div>
+        </div>
+        <div class="question-strip">${item.stem}</div>
+        <p style="font-size:calc(14px * var(--scale)); font-weight:800; color:var(--teal); margin-bottom:8px;">
+          💡 消去法步驟：請先在右方逐句標記「⭕ 正確」或「❌ 錯誤」，下方矛盾的選項便會自動劃走！
+        </p>
+        <div>${stmtsHtml}</div>
+        <div class="mc-options-row">${optsHtml}</div>
+        <div class="feedback-pop" id="elimFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${elimMCs.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一題</button>
+        <button class="nav-btn primary-action" onclick="moveSub(1, ${elimMCs.length})" ${idx === elimMCs.length - 1 ? 'style="visibility:hidden"' : ''}>下一題 →</button>
+      </div>
+    `;
+  }
+
+  function toggleElim(sId, val) {
+    elimState[sId] = (elimState[sId] === val) ? null : val;
+    renderElimMode(document.getElementById("mainStage"));
+  }
+
+  function checkElimMc(oIdx) {
+    const idx = subIdx[4];
+    const item = elimMCs[idx];
+    const fb = document.getElementById("elimFb");
+    fb.style.display = "block";
+    if (oIdx === item.ansIdx) {
+      addScore(20, `4_${idx}`);
+      const breakdown = item.stmts.map(s => `• <strong>陳述 (${s.id}) ${s.isTrue ? '⭕ 正確' : '❌ 錯誤'}</strong>：${s.exp}`).join("<br>");
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `<strong>🏆 答對了！標準答案：${item.options[item.ansIdx].label}</strong><br>${breakdown}`;
+    } else {
+      breakCombo();
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = "❌ <strong>選項不正確！</strong> 試試先在上方逐句判斷 (1)、(2)、(3) 的對錯，利用消去法鎖定答案！";
+    }
+  }
+
+  randomizeAllData();
+  renderStage();
+</script>
+</body>
+</html>

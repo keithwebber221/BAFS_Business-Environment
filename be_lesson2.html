@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企會財視覺互動學習平台｜第 2 課：企業的擁有權類型</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --blue: #2563eb;
+      --indigo: #4f46e5;
+      --teal: #0d9488;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #e11d48;
+      --scale: 1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "PingFang HK", "Microsoft JhengHei", "Noto Sans TC", sans-serif; user-select: none; }
+    body { background: var(--bg); color: var(--text); padding: 12px; font-size: calc(16px * var(--scale)); line-height: 1.55; }
+    .app { max-width: 1060px; margin: 0 auto; }
+
+    @keyframes popIn { 0% { transform: scale(0.94); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    .pop { animation: popIn 0.22s ease-out; }
+    .shake { animation: shake 0.3s ease-in-out; }
+
+    /* 頂部遊戲化狀態列 */
+    .top-bar {
+      background: linear-gradient(135deg, #312e81, #4f46e5, #0f766e);
+      border-radius: 16px;
+      padding: 14px 20px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    }
+    .brand-title { font-size: calc(19.5px * var(--scale)); font-weight: 900; display: flex; align-items: center; gap: 8px; }
+    .stat-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pill-stat { background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.25); padding: 6px 12px; border-radius: 30px; font-weight: 800; font-size: calc(13px * var(--scale)); }
+    .ctrl-btn { background: #fbbf24; color: #0f172a; border: none; padding: 7px 13px; border-radius: 30px; font-weight: 900; font-size: calc(13px * var(--scale)); cursor: pointer; transition: transform 0.15s; }
+    .ctrl-btn:hover { transform: scale(1.05); background: #fcd34d; }
+
+    /* 雙軌學習難度切換器 */
+    .diff-switcher {
+      display: inline-flex;
+      background: rgba(15, 23, 42, 0.75);
+      border: 2px solid rgba(251, 191, 36, 0.65);
+      border-radius: 30px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .diff-btn {
+      border: none;
+      padding: 5px 12px;
+      border-radius: 24px;
+      font-weight: 900;
+      font-size: calc(13px * var(--scale));
+      cursor: pointer;
+      background: transparent;
+      color: #cbd5e1;
+      transition: all 0.2s;
+    }
+    .diff-btn.active-basic {
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
+    }
+    .diff-btn.active-challenge {
+      background: #f59e0b;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+    }
+
+    /* 啟發式導學引導卡（只在基礎導學模式顯示） */
+    .scaffold-banner {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border: 2px solid #34d399;
+      border-left: 7px solid var(--green);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      color: #064e3b;
+      font-size: calc(14.5px * var(--scale));
+      font-weight: 800;
+      line-height: 1.55;
+      text-align: left;
+    }
+    .scaffold-tag {
+      display: inline-block;
+      background: var(--green);
+      color: #fff;
+      font-size: calc(12px * var(--scale));
+      font-weight: 900;
+      padding: 2px 9px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 3px;
+    }
+
+    /* 五大互動遊戲模式導航 */
+    .mode-nav { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+    @media (max-width: 780px) { .mode-nav { grid-template-columns: repeat(2, 1fr); } }
+    .mode-tab {
+      background: var(--panel);
+      border: 2px solid #334155;
+      border-radius: 14px;
+      padding: 12px 8px;
+      color: #cbd5e1;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .mode-tab:hover { border-color: #60a5fa; color: #fff; transform: translateY(-2px); }
+    .mode-tab.active {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-color: #93c5fd;
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(37,99,235,0.45);
+    }
+    .mode-icon { font-size: calc(24px * var(--scale)); display: block; margin-bottom: 4px; }
+    .mode-label { font-size: calc(14px * var(--scale)); font-weight: 900; display: block; }
+    .mode-sub { font-size: calc(11.5px * var(--scale)); opacity: 0.85; }
+
+    /* 主舞台 */
+    .stage {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      min-height: 530px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* 關卡進度與切換列 */
+    .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
+    .level-title { font-size: calc(18px * var(--scale)); font-weight: 900; color: var(--indigo); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .mode-pill-indicator { font-size: calc(12px * var(--scale)); padding: 3px 10px; border-radius: 20px; font-weight: 900; }
+    .mp-basic { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
+    .mp-challenge { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+
+    .dots-nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .dot-btn {
+      width: calc(36px * var(--scale)); height: calc(36px * var(--scale));
+      border-radius: 10px; border: 2px solid #cbd5e1; background: #f8fafc;
+      font-weight: 900; font-size: calc(14px * var(--scale)); cursor: pointer; color: var(--muted);
+    }
+    .dot-btn.active { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+    .dot-btn.done { background: #dcfce7; color: var(--green); border-color: var(--green); }
+
+    /* ================= 模式 1：視覺對比圖卡 ================= */
+    .visual-banner { text-align: center; margin-bottom: 14px; }
+    .visual-topic-tag { display: inline-block; background: #e0e7ff; color: var(--indigo); padding: 4px 14px; border-radius: 20px; font-weight: 900; font-size: calc(13.5px * var(--scale)); margin-bottom: 6px; }
+    .visual-main-q { font-size: calc(21px * var(--scale)); font-weight: 900; color: var(--text); }
+
+    .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 12px 0; }
+    @media (max-width: 700px) { .vs-grid { grid-template-columns: 1fr; } }
+    .vs-card { border-radius: 16px; padding: 20px; position: relative; transition: transform 0.2s; }
+    .vs-card:hover { transform: translateY(-3px); }
+    .vs-true { background: linear-gradient(145deg, #f0fdf4, #dcfce7); border: 3px solid #4ade80; }
+    .vs-false { background: linear-gradient(145deg, #fff1f2, #ffe4e6); border: 3px solid #fb7185; }
+    .vs-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: 900; font-size: calc(13px * var(--scale)); margin-bottom: 10px; }
+    .vs-true .vs-badge { background: var(--green); color: #fff; }
+    .vs-false .vs-badge { background: var(--red); color: #fff; }
+    .vs-icon { font-size: calc(38px * var(--scale)); float: right; }
+    .vs-headline { font-size: calc(18px * var(--scale)); font-weight: 900; margin-bottom: 8px; }
+    .vs-true .vs-headline { color: #14532d; }
+    .vs-false .vs-headline { color: #881337; }
+    .vs-desc { font-size: calc(15px * var(--scale)); font-weight: 700; color: #334155; }
+
+    .interactive-check-bar { background: #f8fafc; border: 2px dashed #94a3b8; border-radius: 14px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .quick-quiz-q { font-size: calc(15.5px * var(--scale)); font-weight: 800; color: var(--text); }
+    .quick-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #cbd5e1; background: #fff; font-weight: 900; font-size: calc(14px * var(--scale)); cursor: pointer; transition: all 0.15s; }
+    .quick-btn:hover { background: #eff6ff; border-color: var(--blue); }
+
+    /* ================= 模式 2：街機式情境快閃分類 ================= */
+    .arcade-arena { text-align: center; max-width: 820px; margin: 0 auto; width: 100%; }
+    .arcade-card {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #fff;
+      border-radius: 20px;
+      padding: 24px 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.25);
+      border: 2px solid #38bdf8;
+    }
+    .arcade-emoji { font-size: calc(44px * var(--scale)); display: block; margin-bottom: 8px; }
+    .arcade-text { font-size: calc(19.5px * var(--scale)); font-weight: 900; line-height: 1.45; }
+    .arcade-highlight { color: #38bdf8; text-decoration: underline; }
+
+    .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .category-grid.grid-3col { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 680px) { .category-grid, .category-grid.grid-3col { grid-template-columns: 1fr; } }
+    .cat-btn {
+      padding: 14px 12px; border-radius: 14px; border: 2px solid #cbd5e1; background: #f8fafc;
+      cursor: pointer; font-weight: 900; font-size: calc(15.5px * var(--scale)); color: var(--text);
+      transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .cat-btn:hover { border-color: var(--blue); background: #eff6ff; transform: scale(1.02); }
+    .cat-btn span.cat-emo { font-size: calc(24px * var(--scale)); }
+    .cat-sub-desc { font-size: calc(12px * var(--scale)); color: var(--muted); font-weight: 800; margin-top: 2px; line-height: 1.35; }
+
+    /* ================= 模式 3：磁力積木砌答案 ================= */
+    .question-strip { background: #fffbeb; border-left: 6px solid var(--amber); padding: 14px 18px; border-radius: 12px; font-size: calc(16px * var(--scale)); font-weight: 900; color: #78350f; margin-bottom: 12px; }
+    .tray-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px; }
+    .tray-box {
+      background: #f1f5f9; border: 3px dashed #64748b; border-radius: 16px; padding: 14px 16px;
+      min-height: 80px; margin-bottom: 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    }
+    .tray-placeholder { color: var(--muted); font-weight: 800; font-size: calc(14.5px * var(--scale)); }
+    .slot-chip {
+      padding: 9px 14px; border-radius: 10px; font-weight: 900; font-size: calc(14px * var(--scale));
+      color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12); transition: transform 0.15s;
+    }
+    .slot-chip:hover { transform: scale(0.97); opacity: 0.9; }
+    .chip-step0 { background: var(--blue); }
+    .chip-step1 { background: var(--amber); }
+    .chip-step2 { background: var(--teal); }
+
+    .blocks-section-title { font-size: calc(14px * var(--scale)); font-weight: 900; color: var(--indigo); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .blocks-pool { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+    .blocks-pool.pool-2col { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 720px) { .blocks-pool, .blocks-pool.pool-2col { grid-template-columns: 1fr; } }
+    .mag-block {
+      padding: 12px 14px; border-radius: 12px; border: 2px solid #cbd5e1; background: #fff;
+      font-size: calc(14px * var(--scale)); font-weight: 800; color: var(--text); cursor: pointer;
+      text-align: left; transition: all 0.15s; box-shadow: 0 3px 6px rgba(0,0,0,0.04); line-height: 1.5;
+    }
+    .mag-block:hover { border-color: var(--indigo); background: #eef2ff; transform: translateY(-2px); }
+    .mag-block.selected { background: #dbeafe; border-color: var(--blue); box-shadow: inset 0 0 0 2px var(--blue); }
+    .mag-block.selected-err { background: #ffe4e6; border-color: var(--red); box-shadow: inset 0 0 0 2px var(--red); }
+    .block-tag { display: inline-block; font-size: calc(11.5px * var(--scale)); font-weight: 900; padding: 2px 8px; border-radius: 6px; margin-bottom: 4px; }
+
+    .helper-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--indigo); background: #eef2ff; color: var(--indigo); font-weight: 800; font-size: calc(13px * var(--scale)); cursor: pointer; }
+    .helper-btn:hover { background: var(--indigo); color: #fff; }
+
+    /* ================= 模式 4：紅筆捉錯挑戰 ================= */
+    .paper-sheet {
+      background: #fefce8; border: 2px solid #fde047; border-radius: 16px; padding: 20px;
+      box-shadow: inset 0 0 15px rgba(202,138,4,0.08); margin-bottom: 16px;
+    }
+    .paper-instruction { font-size: calc(14px * var(--scale)); font-weight: 900; color: var(--red); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .sentence-chips-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .sentence-chip {
+      padding: 14px 16px; border-radius: 12px; border: 2px solid #cbd5e1; background: #fff;
+      font-size: calc(15.5px * var(--scale)); font-weight: 800; color: var(--text); cursor: pointer;
+      transition: all 0.15s; display: flex; justify-content: space-between; align-items: center; gap: 10px; line-height: 1.5;
+    }
+    .sentence-chip:hover { border-color: var(--red); background: #fff1f2; }
+    .sentence-chip.flaw-found { border-color: var(--red); background: #ffe4e6; color: #9f1239; text-decoration: line-through; }
+    .sentence-chip.good-clicked { border-color: var(--green); background: #dcfce7; color: #14532d; }
+
+    /* ================= 模式 5：互動消去法選擇題擂台 ================= */
+    .elim-stmt-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .elim-stmt-text { font-size: calc(15px * var(--scale)); font-weight: 800; flex: 1; min-width: 240px; }
+    .elim-stmt-hint { display: block; font-size: calc(12.5px * var(--scale)); color: #047857; font-weight: 800; margin-top: 4px; }
+    .elim-toggles { display: flex; gap: 6px; }
+    .elim-btn { padding: 6px 12px; border-radius: 8px; border: 2px solid #cbd5e1; background: #fff; font-weight: 900; font-size: calc(13.5px * var(--scale)); cursor: pointer; }
+    .elim-btn.t-true { background: var(--green); color: #fff; border-color: var(--green); }
+    .elim-btn.t-false { background: var(--red); color: #fff; border-color: var(--red); }
+
+    .mc-options-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+    @media (max-width: 600px) { .mc-options-row { grid-template-columns: 1fr; } }
+    .mc-card-btn {
+      padding: 14px 18px; border-radius: 12px; border: 2px solid #94a3b8; background: #fff;
+      font-size: calc(16px * var(--scale)); font-weight: 900; text-align: left; cursor: pointer; transition: all 0.2s;
+    }
+    .mc-card-btn:hover { border-color: var(--blue); background: #eff6ff; }
+    .mc-card-btn.eliminated { opacity: 0.28; text-decoration: line-through; background: #e2e8f0; border-color: #cbd5e1; }
+
+    /* 通用反饋框與底部導航 */
+    .feedback-pop { margin-top: 14px; padding: 16px 18px; border-radius: 14px; font-size: calc(15px * var(--scale)); font-weight: 700; display: none; line-height: 1.6; }
+    .fb-ok { background: #dcfce7; border: 2px solid var(--green); color: #14532d; }
+    .fb-err { background: #ffe4e6; border: 2px solid var(--red); color: #881337; }
+
+    .footer-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 12px; border-top: 2px solid #f1f5f9; }
+    .nav-btn { padding: 10px 20px; border-radius: 10px; border: 2px solid #cbd5e1; background: #fff; font-weight: 900; font-size: calc(14.5px * var(--scale)); cursor: pointer; color: var(--indigo); }
+    .nav-btn:hover { background: #eef2ff; border-color: var(--indigo); }
+    .primary-action { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+    .primary-action:hover { background: var(--blue); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- 頂部狀態與雙軌學習難度切換器（預設開啟「🔥 實戰挑戰」） -->
+  <div class="top-bar">
+    <div class="brand-title">🏢 第 2 課：企業的擁有權類型</div>
+    <div class="stat-group">
+      <div class="diff-switcher" title="切換學習模式：預設為實戰挑戰；如需思維引導與精簡選項可切換至基礎導學">
+        <button class="diff-btn" id="btnBasicMode" onclick="setDifficulty(true)">🌱 基礎導學</button>
+        <button class="diff-btn active-challenge" id="btnChallengeMode" onclick="setDifficulty(false)">🔥 實戰挑戰</button>
+      </div>
+      <div class="pill-stat" id="comboBadge">🔥 連擊：0</div>
+      <div class="pill-stat" id="scoreBadge">⭐ 總分：0</div>
+      <button class="ctrl-btn" onclick="reshuffleAll()" title="重新隨機打亂所有題目與選項次序">🔀 洗牌</button>
+      <button class="ctrl-btn" onclick="toggleZoom()" id="zoomBtn">🔍 大字體：關</button>
+    </div>
+  </div>
+
+  <!-- 五大視覺遊戲模式切換列 -->
+  <div class="mode-nav">
+    <button class="mode-tab active" onclick="switchMode(0)" id="mTab0">
+      <span class="mode-icon">⚡</span>
+      <span class="mode-label">視覺對比卡</span>
+      <span class="mode-sub">30 秒破除迷思</span>
+    </button>
+    <button class="mode-tab" onclick="switchMode(1)" id="mTab1">
+      <span class="mode-icon">🎮</span>
+      <span class="mode-label">情境快閃分類</span>
+      <span class="mode-sub">直觀判別企業類型</span>
+    </button>
+    <button class="mode-tab" onclick="switchMode(2)" id="mTab2">
+      <span class="mode-icon">🧲</span>
+      <span class="mode-label">磁力積木砌答案</span>
+      <span class="mode-sub">3 步拼出滿分論述</span>
+    </button>
+    <button class="mode-tab" onclick="switchMode(3)" id="mTab3">
+      <span class="mode-icon">🖍️</span>
+      <span class="mode-label">紅筆捉錯挑戰</span>
+      <span class="mode-sub">點擊答卷找出失分位</span>
+    </button>
+    <button class="mode-tab" onclick="switchMode(4)" id="mTab4">
+      <span class="mode-icon">🏆</span>
+      <span class="mode-label">選擇題消去擂台</span>
+      <span class="mode-sub">互動劃走錯誤選項</span>
+    </button>
+  </div>
+
+  <!-- 主舞台容器 -->
+  <div class="stage" id="mainStage"></div>
+</div>
+
+<script>
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ==================== 雙軌學習難度狀態（預設為實戰挑戰模式） ====================
+  let isBasicMode = false;
+
+  function setDifficulty(basic) {
+    isBasicMode = basic;
+    document.getElementById("btnBasicMode").className = "diff-btn" + (basic ? " active-basic" : "");
+    document.getElementById("btnChallengeMode").className = "diff-btn" + (!basic ? " active-challenge" : "");
+    renderStage();
+  }
+
+  function getModeBadgeHtml() {
+    return isBasicMode
+      ? `<span class="mode-pill-indicator mp-basic">🌱 基礎導學模式（提供思維引導與精簡選項）</span>`
+      : `<span class="mode-pill-indicator mp-challenge">🔥 實戰挑戰模式（標準考試難度）</span>`;
+  }
+
+  // ==================== 1. 視覺對比圖卡數據（啟發式提問，不直接給答案） ====================
+  const vsCards = [
+    {
+      topic: "獨資、合夥 vs 有限公司：法律地位與稅率",
+      q: "哪類企業才是「獨立法定個體（法人）」？哪類企業的利得稅率較低？",
+      trueTitle: "有限公司屬獨立法人 ＋ 獨資及合夥稅率較低",
+      trueDesc: "私人及公眾有限公司是獨立於東主的法定個體，享永久延續權及有限債務責任；而獨資與合夥的利得稅率（15%）低於有限公司（16.5%）。",
+      trueIcon: "🛡️",
+      falseTitle: "有限合夥是獨立法人 ＋ 有限公司稅率較低",
+      falseDesc: "常犯陷阱！獨資、普通合夥及有限合夥均「不是」獨立法定個體；而且有限公司的利得稅率比獨資及合夥高！",
+      falseIcon: "⚠️",
+      guideHint: "思考方向：比較非法人業務（獨資）與法團業務（有限公司）——轉型後企業在法律上是否與東主分開？法團利得稅率與非法人標準稅率哪一個較高？",
+      quizQ: "快測：若獨資商號轉型為私人有限公司，在法律地位及稅率上有何轉變？",
+      rawOpts: [
+        { text: "企業在法律上會成為獨立於擁有人的法人，但須繳納較高稅率的利得稅", ok: true },
+        { text: "企業須繳納的利得稅率會降低，但擁有人的債務責任會轉為無限責任", ok: false }
+      ]
+    },
+    {
+      topic: "合夥商號：普通、有限與名義合夥人角色",
+      q: "「有限合夥人」與「名義合夥人」在出資、管理及債務責任上有何分別？",
+      trueTitle: "兩者皆不參與日常管理 ＋ 有限合夥必有普通合夥人",
+      trueDesc: "有限合夥人有出資、負有限責任且「不會參與合夥管理」；名義合夥人不出資亦不參與管理（只借出聲譽或名字），但須對合夥債務負責。",
+      trueIcon: "🤝",
+      falseTitle: "有限合夥的所有合夥人均只負有限債務責任",
+      falseDesc: "頭號陷阱！有限合夥必須最少有一名「普通合夥人」負責日常管理並承擔無限債務責任，並非所有合夥人皆負有限責任！",
+      falseIcon: "🚫",
+      guideHint: "思考方向：回想各類合夥人的職責——有限合夥人若參與日常管理會失去甚麼保障？名義合夥人除了借出名字外，會否參與商號的日常運作？",
+      quizQ: "快測：家豪是有限合夥人，雅婷是名義合夥人。兩人在管理合夥商號上有何相同之處？",
+      rawOpts: [
+        { text: "兩人皆不會參與合夥商號的日常營運及管理工作", ok: true },
+        { text: "兩人皆毋須向合夥商號投入資本，且同時享有有限債務責任", ok: false }
+      ]
+    },
+    {
+      topic: "私人有限公司 vs 公眾有限公司（上市公司）",
+      q: "私人有限公司與公眾有限公司在集資、轉讓股份及披露財報上有何差異？",
+      trueTitle: "私人有限公司毋須向公眾公開財報，但須向股東披露",
+      trueDesc: "私人有限公司股東上限 50 人（不計僱員股東），轉讓股份須經董事局批准，不可向公眾發股；雖毋須向大眾公開財報，但每年仍須向股東披露。",
+      trueIcon: "🔒",
+      falseTitle: "所有有限公司均須在報章向大眾公布財務報表",
+      falseDesc: "只有上市公司（公眾有限公司）才須向公眾披露財務報表；但上市公司面對高昂合規成本、喪失財務私隱及原股東控制權被攤薄的缺點！",
+      falseIcon: "📰",
+      guideHint: "思考方向：比較私人有限公司與公眾有限公司在「集資範圍」與「財務報表披露對象」上的限制——哪一項屬於不向大眾招股所帶來的優勢？",
+      quizQ: "快測：與公眾有限公司比較，下列哪項屬於私人有限公司的優點？",
+      rawOpts: [
+        { text: "政府監管較少，且毋須向公眾披露財務報表，業務私隱度較高", ok: true },
+        { text: "集資渠道較廣闊，且股份可在證券交易所自由買賣轉讓", ok: false }
+      ]
+    },
+    {
+      topic: "特許經營 vs 合營企業",
+      q: "加盟「特許經營」與成立「合營企業」在控制權及法律地位上有何特點？",
+      trueTitle: "合營企業是新獨立個體 ＋ 加盟商易入行及有穩定供貨",
+      trueDesc: "合營企業由最少兩家企業共同出資組成一個獨立於合夥人的新企業個體（項目完成後通常解散）；特許經營加盟商可憑知名品牌較易進入市場。",
+      trueIcon: "🏪",
+      falseTitle: "加盟商對業務有高度控制權，且虧損時毋須交專利費",
+      falseDesc: "兩大陷阱：① 加盟商須聽從總部嚴格指示（控制權小）；② 即使業務蒙受損失，加盟商仍須按期向總部支付特許權使用費！",
+      falseIcon: "❌",
+      guideHint: "思考方向：回想合營企業的成立目的——多家企業共同出資組成新個體是為了獨攬控制權，還是透過協議共同管理並結合各方專長？",
+      quizQ: "快測：在合營企業中，是否必定由投資最多資本的一方獨攬業務營運的最終決定權？",
+      rawOpts: [
+        { text: "不是，合營企業由各夥伴根據協議共同管理、分享專長及分擔風險", ok: true },
+        { text: "是，在法律上出資比例最高的一方必定獨攬所有最終決定權", ok: false }
+      ]
+    },
+    {
+      topic: "公營公司 vs 跨國公司",
+      q: "「公營公司（如海洋公園公司、機場管理局）」與「跨國公司」如何界定？",
+      trueTitle: "公營公司由政府委任董事局並自負盈虧 ＋ 跨國公司跨國營運",
+      trueDesc: "公營公司由政府擁有、屬獨立法人、董事局由政府委任，以商業模式運作並財政上自給自足；跨國公司則在母國以外的不同國家設有廠房或分行。",
+      trueIcon: "🌐",
+      falseTitle: "政府參與公營公司日常營運 ＋ 向外國買原料即跨國公司",
+      falseDesc: "常考陷阱：① 政府「不會」參與公營公司的日常營運；② 僅從外國購買原材料、在海外發債或經代理出口貨品，並「不算」跨國公司！",
+      falseIcon: "🛑",
+      guideHint: "思考方向：審視「跨國公司」的嚴格定義——單純從外國進口零件回本國組裝，與在母國以外的其他國家直接設立生產廠房，哪一種才符合跨國營運的定義？",
+      quizQ: "快測：星輝公司在馬來西亞設生產廠房，宏達公司從日本進口零件在香港組裝。哪家才是跨國公司？",
+      rawOpts: [
+        { text: "只有星輝公司屬於跨國公司", ok: true },
+        { text: "星輝公司與宏達公司均屬於跨國公司", ok: false }
+      ]
+    }
+  ];
+
+  // ==================== 2. 街機式快閃分類數據（啟發式引導，不直接給答案） ====================
+  const arcadeCategoriesMeta = [
+    { key: "👤 獨資經營", desc: "單一東主全權擁有及管理、負無限債務責任" },
+    { key: "🤝 普通合夥", desc: "兩名或以上東主共同管理、負無限連帶責任" },
+    { key: "🛡️ 有限／名義", desc: "不參與日常管理的特殊合夥人（只出資或只借名）" },
+    { key: "🔒 私人有限", desc: "獨立法人、股東上限50人、轉讓股份須批准" },
+    { key: "📈 上市公司", desc: "獨立法人、向公眾發股集資、股份自由買賣" },
+    { key: "🏪 特許經營", desc: "繳付專利費獲總部授權使用品牌及統一營運模式" },
+    { key: "🧩 合營企業", desc: "多家企業為特定項目共同出資組成的新獨立個體" },
+    { key: "🏛️ 公營／跨國", desc: "政府擁有的獨立商業機構，或在多國設廠房分行的企業" }
+  ];
+
+  let arcadeItems = [
+    {
+      emoji: "☕",
+      text: "咖啡師獨自出資開設精品咖啡店，<span class='arcade-highlight'>一人包辦所有決策且決策過程極短</span>，但須獨自承擔<span class='arcade-highlight'>無限債務責任</span>。",
+      guideHint: "思維引導：請留意擁有人的數目（「獨自出資」、「一人包辦決策」）以及其債務責任屬無限責任，這符合哪種企業類型的特徵？",
+      ans: "👤 獨資經營",
+      basicPool: ["👤 獨資經營", "🤝 普通合夥", "🔒 私人有限"],
+      exp: "獨資經營只有一位東主，決策具高度彈性及過程較短，利得稅率較低，但東主須承擔個人無限債務責任。"
+    },
+    {
+      emoji: "🐾",
+      text: "兩位獸醫共同出資開辦診所，享有較低稅率且成立程序簡單，但<span class='arcade-highlight'>每位合夥人均須對夥伴的商業決策負無限連帶責任</span>。",
+      guideHint: "思維引導：由兩位東主共同出資管理，且全部合夥人均須承擔「無限連帶責任」，這屬於哪一種合夥形式？",
+      ans: "🤝 普通合夥",
+      basicPool: ["🤝 普通合夥", "🛡️ 有限／名義", "🔒 私人有限"],
+      exp: "普通合夥沒有有限合夥人，所有合夥人共同參與管理，並對合夥商號的債務及夥伴決策承擔無限連帶責任。"
+    },
+    {
+      emoji: "🌟",
+      text: "著名食評家張師傅<span class='arcade-highlight'>沒有向餐廳合夥商號注資，亦不參與日常運作</span>，只借出其知名度及名字以提升餐廳聲譽。",
+      guideHint: "思維引導：這位人士在合夥商號中既不出資、亦不參與日常管理，只借出個人聲譽及名字，屬於哪一類合夥人？",
+      ans: "🛡️ 有限／名義",
+      basicPool: ["🛡️ 有限／名義", "🤝 普通合夥", "🏪 特許經營"],
+      exp: "不出資、不參與日常管理，只借出名字及聲譽予合夥商號的人士屬於「名義合夥人」（注意：有限合夥人則是「有出資、不參與管理、負有限責任」）。"
+    },
+    {
+      emoji: "🔐",
+      text: "公司屬於<span class='arcade-highlight'>獨立法定個體</span>，所有股東僅負有限債務責任，<span class='arcade-highlight'>轉讓股份須獲董事局批准</span>，且毋須向公眾公開財務報表。",
+      guideHint: "思維引導：具備獨立法人地位，但「股份轉讓受限」且「毋須向公眾公開財務報表」，試比較兩種有限公司的分別。",
+      ans: "🔒 私人有限",
+      basicPool: ["🔒 私人有限", "📈 上市公司", "🤝 普通合夥"],
+      exp: "私人有限公司具備獨立法人地位及永久延續權，股東上限 50 人，股份不能自由轉讓，毋須向大眾公開財報。"
+    },
+    {
+      emoji: "🔔",
+      text: "企業為籌集龐大資金研發新能源技術，<span class='arcade-highlight'>向公眾發行股票並在證券交易所上市</span>，但須定期向大眾公開經審計年報。",
+      guideHint: "思維引導：能夠「向公眾發行股票」並在證券交易所自由買賣股份，且必須向大眾公開年報，屬於哪一類有限公司？",
+      ans: "📈 上市公司",
+      basicPool: ["📈 上市公司", "🔒 私人有限", "🏛️ 公營／跨國"],
+      exp: "公眾有限公司（上市公司）可向公眾發行股票集資，股份可自由買賣，但監管嚴格、合規成本高且喪失財務私隱。"
+    },
+    {
+      emoji: "🧋",
+      text: "創業者向知名珍珠奶茶品牌總部繳交加盟費及定期專利費，<span class='arcade-highlight'>在總部授權及統一營運指引下開店，並獲得穩定原料供應</span>。",
+      guideHint: "思維引導：創業者透過繳付費用獲得知名品牌總部的授權、統一營運指引與物資支援，這種商業擴張與開店模式稱為甚麼？",
+      ans: "🏪 特許經營",
+      basicPool: ["🏪 特許經營", "🧩 合營企業", "👤 獨資經營"],
+      exp: "在特許經營模式下，特許權使用人（加盟商）在特許權擁有人（總部）授權下運作，較易進入市場但控制權較小。"
+    },
+    {
+      emoji: "🏗️",
+      text: "兩家獨立企業為共同研發一項自動駕駛系統，<span class='arcade-highlight'>共同出資組成一個新的獨立企業個體，在項目完成後通常便解散</span>。",
+      guideHint: "思維引導：兩家獨立企業為了一項特定研發項目而共同出資組成「新的獨立企業個體」，並在完成後解散，這屬於哪種合作模式？",
+      ans: "🧩 合營企業",
+      basicPool: ["🧩 合營企業", "🏪 特許經營", "🤝 普通合夥"],
+      exp: "合營企業是由最少兩家企業組成的新獨立企業個體，共同承擔企業風險及分享專長，在合作項目完成後通常便解散。"
+    },
+    {
+      emoji: "🎢",
+      text: "機構為<span class='arcade-highlight'>獨立法定個體，董事局主席及成員由政府委任</span>，以商業模式運作並財政自給自足，但<span class='arcade-highlight'>政府不參與其日常營運</span>。",
+      guideHint: "思維引導：由政府擁有及委任董事局，但屬於自負盈虧並按商業原則運作的獨立法定個體，這屬於哪一類機構？",
+      ans: "🏛️ 公營／跨國",
+      basicPool: ["🏛️ 公營／跨國", "📈 上市公司", "🔒 私人有限"],
+      exp: "公營公司由政府擁有並委任董事局，屬獨立法人並以商業模式自負盈虧運作，政府不參與日常營運。"
+    }
+  ];
+
+  // ==================== 3. 磁力積木砌答案數據（啟發式結構引導，不直接給答案） ====================
+  const legoChallenges = [
+    {
+      title: "砌答案挑戰 1：接納邀請組成「合夥」而非「獨資經營」的原因（2 分）",
+      q: "議題：阿朗是一位手機應用程式設計師，正考慮獨自創業；同時另一位網絡保安專家阿杰邀請他組成合夥。試提出阿朗應接納邀請組成合夥而非獨自創業的一項原因。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：比較「合夥」相對於「獨資經營」在資源、專長或風險分擔上的真正優勢（注意兩者的債務責任與稅率是否相同） ➔ 🟨 第二步：扣連阿朗（程式設計）與阿杰（網絡保安）兩人的背景 ➔ 🟩 第三步：推論兩人合作對工作室發展的正面結果。",
+      step0: [
+        {
+          text: "💰 匯集更多創業資本、結合互補專業知識與技能，或共同分擔經營風險與工作量",
+          easyText: "🟦 概念：匯集更多創業資本、結合互補專業知識，或共同分擔風險與工作",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🛡️ 組成普通合夥可讓兩位合夥人均享有有限債務責任保障",
+          easyText: "🟦 概念：組成普通合夥可讓兩位合夥人均享有有限債務責任保障",
+          ok: false, basicKeep: true, err: "普通合夥人必須承擔個人無限連帶債務責任，並非有限責任！"
+        },
+        {
+          text: "📉 合夥商號所適用的標準利得稅率較獨資商號為低",
+          easyText: "🟦 概念：合夥商號所適用的標準利得稅率較獨資商號為低",
+          ok: false, basicKeep: false, err: "獨資與合夥均屬於非法人業務，適用相同的標準利得稅率（15%），合夥稅率並沒有較低！"
+        }
+      ],
+      step1: [
+        {
+          text: "🤝 組成合夥可結合阿朗與阿杰兩人的資金、各自的軟件設計與網絡保安專長及客戶人脈網絡",
+          easyText: "🟨 起因：可結合阿朗與阿杰兩人的資金、軟件設計與網絡保安專長及人脈",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏦 合夥企業可在香港聯合交易所向公眾發行新股以籌集龐大資金",
+          easyText: "🟨 起因：合夥企業可在香港聯合交易所向公眾發行新股集資",
+          ok: false, basicKeep: true, err: "只有公眾有限公司（上市公司）才可向公眾發行股票集資！"
+        },
+        {
+          text: "⚖️ 合夥企業在法律上會自動成為一個獨立於東主的法定個體（法人）",
+          easyText: "🟨 起因：合夥企業在法律上會成為獨立於東主的法人",
+          ok: false, basicKeep: false, err: "合夥商號並非獨立法定個體（有限公司才是獨立法人）！"
+        }
+      ],
+      step2: [
+        {
+          text: "🚀 從而擴大創業初期的財務資源與服務範疇，並由兩人共同分擔業務虧損風險與管理工作。",
+          easyText: "🟩 結果：從而擴大創業初期的財務資源與服務範疇，並共同分擔風險與管理工作。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🔒 讓阿朗可以完全獨攬工作室的所有決策權，在作出商業決定前無須與阿杰商量。",
+          easyText: "🟩 結果：讓阿朗可以完全獨攬所有決策權，無須與阿杰商量。",
+          ok: false, basicKeep: true, err: "合夥經營需與合夥人共同商議決策，決策過程較獨資經營長！"
+        },
+        {
+          text: "♾️ 確保工作室享有永久延續權，不會因任何合夥人日後退出或破產而解散。",
+          easyText: "🟩 結果：確保工作室享有永久延續權，不會因合夥人退出而解散。",
+          ok: false, basicKeep: false, err: "普通合夥沒有永久延續權，合夥人退出、破產或去世會導致合夥解散！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 2：「名義合夥人」可為合夥企業作出的貢獻（2 分）",
+      q: "議題：一家新成立的私房菜合夥商號，邀請在飲食界極具知名度且經驗豐富的星級主廚張師傅加入成為「名義合夥人」。試提出張師傅可為該合夥商號作出的一項貢獻。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：回想「名義合夥人」的定義（不出資、不參與日常管理），思考商號邀請知名人士擔任名義合夥人的真正目的 ➔ 🟨 第二步：扣連張師傅在飲食界的知名度與豐富經驗 ➔ 🟩 第三步：推論其聲譽與人脈如何幫助這家新成立的私房菜館。",
+      step0: [
+        {
+          text: "🌟 提升企業聲譽與公信力，並擴闊商業人脈網絡或提供專業顧問意見",
+          easyText: "🟦 概念：提升企業聲譽與公信力，並擴闊人脈網絡或提供專業意見",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "💵 為私房菜合夥商號注入龐大個人資金，以清還商號的銀行裝修貸款",
+          easyText: "🟦 概念：為私房菜合夥商號注入龐大個人資金以清還貸款",
+          ok: false, basicKeep: true, err: "名義合夥人並不會向合夥商號投入資本（不出資）！"
+        },
+        {
+          text: "👷 每天親自駐守廚房全職負責日常烹飪運作與餐廳員工管理",
+          easyText: "🟦 概念：每天親自駐守廚房全職負責日常運作與員工管理",
+          ok: false, basicKeep: false, err: "名義合夥人不會參與合夥商號的日常營運與管理！"
+        }
+      ],
+      step1: [
+        {
+          text: "🏆 由於張師傅是飲食界知名且經驗豐富的星級主廚，向商號借出其個人名字與聲譽",
+          easyText: "🟨 起因：張師傅是飲食界知名星級主廚，向商號借出其個人名字與聲譽",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "📄 由於張師傅是代表香港特區政府委任入董事局以監督餐廳運作的官員",
+          easyText: "🟨 起因：張師傅是代表特區政府委任入董事局監督運作的官員",
+          ok: false, basicKeep: false, err: "政府委任董事局成員屬於「公營公司」的特徵，與名義合夥人無關！"
+        },
+        {
+          text: "🛡️ 由於張師傅加入後可替全體普通合夥人免除所有無限債務責任",
+          easyText: "🟨 起因：張師傅加入後可替全體普通合夥人免除所有無限債務責任",
+          ok: false, basicKeep: true, err: "名義合夥人加入並不會免除普通合夥人的無限債務責任！"
+        }
+      ],
+      step2: [
+        {
+          text: "📈 能增強食客及供應商對餐廳的信心以推廣業務，並利用其飲食界人脈及專業知識為餐廳帶來客源及菜式意見。",
+          easyText: "🟩 結果：能增強食客及供應商對餐廳的信心以推廣業務，並帶來客源及專業意見。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "📉 這會令該私房菜合夥商號獲稅務局豁免繳納任何利得稅。",
+          easyText: "🟩 結果：令該私房菜合夥商號獲稅務局豁免繳納任何利得稅。",
+          ok: false, basicKeep: true, err: "名義合夥人加入不會改變商號的法定納稅義務！"
+        },
+        {
+          text: "🏦 讓該合夥商號自動轉型為在香港交易所主板上市的公眾有限公司。",
+          easyText: "🟩 結果：讓該合夥商號自動轉型為上市公眾有限公司。",
+          ok: false, basicKeep: false, err: "合夥商號不會因名義合夥人加入而自動變成上市公司！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 3：「私人有限公司」轉為「上市公司」的缺點（2 分）",
+      q: "議題：「綠源環保科技有限公司」是一家私人有限公司，現決定轉為上市公司（公眾有限公司）以籌集資金擴建廠房。與私人有限公司比較，解釋轉為上市公司的一項缺點。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：比較「上市公司」與「私人有限公司」——上市雖然擴闊集資渠道，但在財務透明度或股權結構上會帶來甚麼代價？ ➔ 🟨 第二步：指出上市公司在財務披露及股份買賣上的法定要求 ➔ 🟩 第三步：推論這項要求對公司商業機密或創辦人控制權的負面影響。",
+      step0: [
+        {
+          text: "📊 喪失財務私隱與監管繁複、上市合規成本高昂，或原有股東控制權被攤薄（面對敵意收購風險）",
+          easyText: "🟦 概念：喪失財務私隱、合規成本高昂，或原有股東控制權被攤薄",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "⚠️ 原有股東的債務責任會由有限債務責任轉變為無限債務責任",
+          easyText: "🟦 概念：原有股東的債務責任會由有限責任轉變為無限責任",
+          ok: false, basicKeep: true, err: "私人有限公司與上市公司的股東同樣享有有限債務責任！"
+        },
+        {
+          text: "💸 轉為上市公司後，公司的集資渠道會變得比私人有限公司更為狹窄",
+          easyText: "🟦 概念：轉為上市公司後，集資渠道會比私人有限公司更狹窄",
+          ok: false, basicKeep: false, err: "上市公司可向公眾發股及發債，資金來源遠比私人有限公司廣闊！"
+        }
+      ],
+      step1: [
+        {
+          text: "📢 上市公司必須遵守嚴格的上市規則，定期向公眾公開經審計的財務報表，且股份可在公開市場自由買賣",
+          easyText: "🟨 起因：上市公司必須定期向公眾公開財務報表，且股份可在公開市場自由買賣",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🔒 上市公司的股東人數上限被法例嚴格限制在 50 人以下",
+          easyText: "🟨 起因：上市公司的股東人數上限被法例嚴格限制在 50 人以下",
+          ok: false, basicKeep: true, err: "股東人數上限 50 人是「私人有限公司」的限制，上市公司股東人數無上限！"
+        },
+        {
+          text: "🏛️ 上市公司的所有日常採購與銷售決策必須先獲政府官員直接審批",
+          easyText: "🟨 起因：上市公司的日常商業決策必須先獲政府官員直接審批",
+          ok: false, basicKeep: false, err: "上市公司由董事局管理，政府不會審批其日常商業決策！"
+        }
+      ],
+      step2: [
+        {
+          text: "🕵️ 這會令競爭對手輕易掌握公司的財務狀況與商業機密，同時向公眾配售新股會攤薄創辦人的控制權，增加被敵意收購的風險。",
+          easyText: "🟩 結果：令競爭對手掌握公司財務狀況，同時向公眾發股會攤薄創辦人控制權（易被敵意收購）。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "⚰️ 當任何一位公眾小股東去世或賣出股票時，該上市公司就必須立即清盤解散。",
+          easyText: "🟩 結果：當任何一位小股東去世或賣股時，上市公司必須立即清盤解散。",
+          ok: false, basicKeep: false, err: "有限公司享有永久延續權，不會因股東退出或死亡而結束！"
+        },
+        {
+          text: "🧾 令公司需要繳納比私人有限公司高出一倍的法團利得稅稅率。",
+          easyText: "🟩 結果：令公司需要繳納比私人有限公司高出一倍的法團利得稅率。",
+          ok: false, basicKeep: true, err: "香港所有法團（私人及公眾有限公司）均適用相同的法團利得稅率（16.5%）！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 4：總部採用「特許經營」方式開設分店的潛在問題（2 分）",
+      q: "議題：「茶語軒」是一家知名連鎖茶飲品牌，總部計劃以「特許經營」方式授權加盟商在海外開設分店。試說明總部（特許權擁有人）採用特許經營方式可能會遇到的一個問題。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：站在「總部（特許權擁有人）」的角度思考，將品牌與配方交由外地加盟商獨立經營會帶來甚麼管理或商譽風險？ ➔ 🟨 第二步：說明總部對海外加盟商在日常監督及配方保密上的限制 ➔ 🟩 第三步：推論一旦加盟商管理不善或合約期滿後對總部品牌造成的後果。",
+      step0: [
+        {
+          text: "⚠️ 難以完全控制分店服務與產品品質而影響品牌整體聲譽，或特許權使用人可能自立門戶成為競爭者",
+          easyText: "🟦 概念：難以完全控制分店品質而影響品牌聲譽，或加盟商可能自立門戶成為競爭者",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "💰 總部必須獨自出資承擔海外所有加盟分店的店舖租金及裝修費用",
+          easyText: "🟦 概念：總部必須獨自出資承擔海外所有加盟分店的租金及裝修費",
+          ok: false, basicKeep: true, err: "在特許經營下，分店的開業資金及租金主要由加盟商（特許權使用人）承擔，這正是總部的好處而非問題！"
+        },
+        {
+          text: "📉 若海外加盟分店蒙受虧損，總部在法律上不得向該分店收取任何定期特許權使用費",
+          easyText: "🟦 概念：若加盟店虧損，總部不得收取任何定期特許權使用費",
+          ok: false, basicKeep: false, err: "即使特許經營業務蒙受損失，特許權使用人仍須按合約向總部支付特許權使用費！"
+        }
+      ],
+      step1: [
+        {
+          text: "🌏 由於總部難以每日現場監督各海外分店（特許權使用人）的經營方式，且加盟商在經營期間會掌握總部的茶飲配方與營運秘訣",
+          easyText: "🟨 起因：總部難以每日現場監督海外加盟店，且加盟商會掌握總部的配方與營運秘訣",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏛️ 由於法例規定所有特許經營連鎖店都必須由當地政府全資擁有",
+          easyText: "🟨 起因：法例規定所有特許經營店必須由當地政府全資擁有",
+          ok: false, basicKeep: false, err: "由政府全資擁有的是「公營公司」，並非特許經營店！"
+        },
+        {
+          text: "🤝 由於特許經營店在開業滿一年後必須按法例強制解散",
+          easyText: "🟨 起因：特許經營店在開業滿一年後必須按法例強制解散",
+          ok: false, basicKeep: true, err: "合作項目完成後通常解散是「合營企業」的特徵，而非特許經營！"
+        }
+      ],
+      step2: [
+        {
+          text: "💥 一旦個別加盟分店經營不善或衛生質素欠佳，便會損害品牌整體的商譽；而加盟商在合約期滿後亦可能自立門戶成為直接競爭對手。",
+          easyText: "🟩 結果：一旦個別加盟店質素欠佳便會損害品牌整體商譽；加盟商期滿後亦可能自立門戶競爭。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🛡️ 總部股東因此需要以個人儲蓄為海外加盟商的所有私人債務承擔無限責任。",
+          easyText: "🟩 結果：總部股東需要以個人儲蓄為加盟商的私人債務負無限責任。",
+          ok: false, basicKeep: true, err: "總部與加盟商各自為獨立商業個體，總部毋須以個人儲蓄替加盟商還債！"
+        },
+        {
+          text: "📈 這會令總部自動失去在原本註冊地的商標擁有權。",
+          easyText: "🟩 結果：令總部自動失去在原本註冊地的商標擁有權。",
+          ok: false, basicKeep: false, err: "授權加盟商使用商標不會令總部失去商標擁有權！"
+        }
+      ]
+    },
+    {
+      title: "砌答案挑戰 5：辨識「有限合夥人」的身份與債務責任（2 分）",
+      q: "議題：文靜和嘉欣是一家手工皂店的合夥人。手工皂店因嚴重虧損決定結業，雖然店舖尚欠原材料供應商巨額貨款，但嘉欣在法律上毋須以個人儲蓄償還欠款。指出嘉欣屬於哪類合夥人並解釋原因。（2 分）",
+      guideHint: "答題思維引導：🟦 第一步：根據「毋須以個人儲蓄償還合夥欠款」這一關鍵線索，判斷嘉欣屬於哪一類合夥人 ➔ 🟨 第二步：說明該類合夥人在出資、管理權及法定債務責任上的特徵 ➔ 🟩 第三步：推論她在店舖結業時的最高損失上限。",
+      step0: [
+        {
+          text: "🛡️ 有限合夥人",
+          easyText: "🟦 概念：有限合夥人",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🌟 名義合夥人（因為她借出名字且享有有限債務責任）",
+          easyText: "🟦 概念：名義合夥人",
+          ok: false, basicKeep: false, err: "名義合夥人對不知情第三方債權人仍須承擔合夥債務，並非享有有限責任！"
+        },
+        {
+          text: "🤝 普通合夥人（因為她負責手工皂店的日常管理）",
+          easyText: "🟦 概念：普通合夥人",
+          ok: false, basicKeep: true, err: "普通合夥人必須以個人財產對合夥未清償債務負無限連帶責任！"
+        }
+      ],
+      step1: [
+        {
+          text: "📋 嘉欣在該合夥商號中只出資而不參與日常業務管理，在法律上享有有限債務責任",
+          easyText: "🟨 起因：嘉欣在合夥商號中只出資而不參與日常管理，在法律上享有有限債務責任",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "🏢 該手工皂合夥商號在法律上是一個獨立於東主的法定個體（法人）",
+          easyText: "🟨 起因：該合夥商號在法律上是一個獨立於東主的法定個體（法人）",
+          ok: false, basicKeep: true, err: "有限合夥商號並非獨立法定個體（有限公司才是獨立法人）！"
+        },
+        {
+          text: "🌏 該手工皂店同時在法國和日本設有廠房生產香薰精油",
+          easyText: "🟨 起因：該店同時在法國和日本設有廠房生產香薰精油",
+          ok: false, basicKeep: false, err: "在其他國家設有廠房營運是「跨國公司」的定義，與嘉欣的合夥人身份無關！"
+        }
+      ],
+      step2: [
+        {
+          text: "🔒 因此她的最高損失僅限於她投資於該合夥手工皂店的出資金額，毋須動用個人儲蓄償還商號未清還的債務。",
+          easyText: "🟩 結果：因此她的最高損失僅限於投資在該店的出資金額，毋須動用個人儲蓄還債。",
+          ok: true, basicKeep: true
+        },
+        {
+          text: "💰 因此當手工皂店結業時，她有權比供應商優先取回雙倍的投資本金。",
+          easyText: "🟩 結果：因此結業時她有權比供應商優先取回雙倍投資本金。",
+          ok: false, basicKeep: false, err: "嚴重虧損結業時，有限合夥人會損失其出資額，並無雙倍退還本金的特權！"
+        },
+        {
+          text: "🏛️ 因此手工皂店未清還的原材料貨款會由特區政府全數代為償還。",
+          easyText: "🟩 結果：因此未清還的貨款會由特區政府全數代為償還。",
+          ok: false, basicKeep: true, err: "私營合夥商號的未清債務由「普通合夥人（文靜）」以個人資金承擔，絕非由政府償還！"
+        }
+      ]
+    }
+  ];
+
+  // ==================== 4. 紅筆捉錯挑戰數據（提供審題切入點，不直接劇透哪句錯） ====================
+  const redPenCases = [
+    {
+      title: "紅筆批改挑戰 1：找出答卷中關於「合夥商號」的概念錯誤",
+      q: "議題：比較「普通合夥」與「有限合夥」的法律特徵與合夥人責任。",
+      guideHint: "審題切入點：請從「是否屬於獨立法定個體（法人）」以及「有限合夥是否所有合夥人都可以只負有限責任」兩個角度，檢視以下哪一句違反了法例規定。",
+      chips: [
+        {
+          text: "普通合夥沒有有限合夥人，所有合夥人均須對商號的債務承擔無限連帶責任。",
+          easyText: "普通合夥沒有有限合夥人，所有合夥人均須承擔無限連帶責任。",
+          isFlaw: false
+        },
+        {
+          text: "有限合夥是獨立於東主的法定個體，且有限合夥內的所有合夥人均只負有限債務責任。",
+          easyText: "有限合夥是獨立法定個體，且有限合夥內的所有合夥人均只負有限債務責任。",
+          isFlaw: true
+        },
+        {
+          text: "有限合夥人不會參與合夥商號的日常管理，否則會失去有限債務責任的保障。",
+          easyText: "有限合夥人不會參與合夥商號的日常管理，否則會失去有限責任保障。",
+          isFlaw: false
+        }
+      ],
+      exp: "<strong>• 失分原因</strong>：該句連犯兩個高頻錯誤：<br>1. 有限合夥**不是**獨立法定個體（只有有限公司及公營公司才是獨立法定個體）；<br>2. 有限合夥必須**最少有一名普通合夥人承擔無限債務責任**，並非所有合夥人均只負有限責任！"
+    },
+    {
+      title: "紅筆批改挑戰 2：找出答卷中關於「私人有限公司」的概念錯誤",
+      q: "議題：某東主決定將其獨資商號轉型為「私人有限公司」。說明私人有限公司的特點。",
+      guideHint: "審題切入點：請檢視私人有限公司在「法人地位與延續性」、「財務報表披露對象」以及「可否向公眾發股集資與利得稅率高低」三方面的描述，找出有誤的一句。",
+      chips: [
+        {
+          text: "私人有限公司是獨立於擁有人的法定個體，企業不會因東主的退出或死亡而結束（享永久延續權）。",
+          easyText: "私人有限公司是獨立法定個體，不會因東主退出或死亡而結束（享永久延續權）。",
+          isFlaw: false
+        },
+        {
+          text: "私人有限公司的股東可被委任為董事局成員，且公司毋須向公眾披露其財務報表（但須每年向股東披露）。",
+          easyText: "股東可被委任為董事，且公司毋須向公眾披露財務報表（但須向股東披露）。",
+          isFlaw: false
+        },
+        {
+          text: "轉為私人有限公司後，公司可向公眾發行股票集資，並享有較獨資商號更低的利得稅率。",
+          easyText: "私人有限公司可向公眾發行股票集資，並享有較獨資商號更低的利得稅率。",
+          isFlaw: true
+        }
+      ],
+      exp: "<strong>• 失分原因</strong>：該句完全顛倒了核心概念：<br>1. 私人有限公司**嚴禁向公眾發行股票**（只有公眾有限公司才可向公眾發股）；<br>2. 有限公司的法團利得稅率（16.5%）**高於**獨資商號的標準稅率（15%），而非較低！"
+    },
+    {
+      title: "紅筆批改挑戰 3：找出答卷中關於「公營公司與跨國公司」的錯誤",
+      q: "議題：分辨香港的「公營公司」與「跨國公司」的運作特徵。",
+      guideHint: "審題切入點：請思考兩個問題：① 政府委任公營公司董事局後，會否直接插手其日常營運？② 單純從外國買原料或在海外發債，是否就符合「跨國公司」的定義？",
+      chips: [
+        {
+          text: "公營公司（如機場管理局、海洋公園公司）是獨立法定個體，董事局成員由政府委任，以商業模式運作並財政上自給自足。",
+          easyText: "公營公司是獨立法定個體，董事局由政府委任，以商業模式自負盈虧運作。",
+          isFlaw: false
+        },
+        {
+          text: "政府會直接參與公營公司的日常營運；而任何從外國購買原材料或在海外發行債券的本地公司均屬跨國公司。",
+          easyText: "政府會直接參與公營公司的日常營運；且任何從外國買原料的公司均屬跨國公司。",
+          isFlaw: true
+        },
+        {
+          text: "真正的跨國公司必須在母國以外的其他國家設有實質營運實體（如設立海外生產廠房或海外銷售分行）。",
+          easyText: "跨國公司必須在母國以外的其他國家設有實質營運實體（如海外廠房或分行）。",
+          isFlaw: false
+        }
+      ],
+      exp: "<strong>• 失分原因</strong>：<br>1. 政府只委任公營公司的董事局成員，**不會參與其日常營運**；<br>2. 僅從外國進口原料、在海外買賣股票發債或經代理出口貨品，**並不構成跨國公司**（必須在其他國家設有廠房或分行等實質營運）！"
+    }
+  ];
+
+  // ==================== 5. 互動消去法選擇題數據（導學提示改為思考方向提問，不直接劇透對錯） ====================
+  let elimMCs = [
+    {
+      title: "消去法實戰 1：普通合夥與有限合夥的法律地位",
+      stem: "志強與美玲是一家貿易商號的合夥人，當中美玲是有限合夥人。下列哪項有關該合夥商號的陳述是正確的？",
+      rawStmts: [
+        { text: "美玲不會參與該合夥商號的日常管理。", hint: "思考方向：有限合夥人在商號中的角色是甚麼？若她參與日常管理會帶來甚麼後果？", isTrue: true, exp: "正確！有限合夥人只出資而不參與合夥商號的日常營運與管理。" },
+        { text: "該有限合夥商號在法律上是獨立於東主的法定個體（法人）。", hint: "思考方向：在香港，合夥商號（不論普通合夥或有限合夥）是否具備獨立法人地位？", isTrue: false, exp: "錯誤！不論普通合夥或有限合夥，均不是獨立法定個體。" },
+        { text: "志強與美玲兩位合夥人的最高損失，均僅限於他們投資於該合夥商號的金額。", hint: "思考方向：一間有限合夥商號可否全部都是有限合夥人？另一位合夥人志強須承擔甚麼債務責任？", isTrue: false, exp: "錯誤！有限合夥必須最少有一名普通合夥人（志強）承擔無限債務責任，因此志強的損失不限於其投資額！" }
+      ]
+    },
+    {
+      title: "消去法實戰 2：私人有限公司的法定規範",
+      stem: "下列哪些有關香港「私人有限公司」的陳述是正確的？",
+      rawStmts: [
+        { text: "它是獨立的法定個體，且股東可被委任為董事局成員參與管理。", hint: "思考方向：私人有限公司是否具備獨立法人地位？其股東能否兼任公司董事？", isTrue: true, exp: "正確！私人有限公司具獨立法人地位，股東可兼任董事（所有權與管理權可結合或分開）。" },
+        { text: "它毋須向公眾披露財務報表（私隱度較高），但須每年向股東披露財務報表。", hint: "思考方向：私人有限公司的財務報表是否需要向社會大眾公開？是否仍須向公司股東交代？", isTrue: true, exp: "正確！私人有限公司不向大眾公開財報，但每年須向股東大會提交財務報表。" },
+        { text: "它可向公眾發行股票集資，且較獨資商號享有更低的利得稅率。", hint: "思考方向：私人有限公司能否向公眾招股？有限公司與獨資商號哪一個的利得稅率較高？", isTrue: false, exp: "錯誤！私人有限公司不可向公眾發股，且法團利得稅率（16.5%）高於獨資商號（15%）！" }
+      ]
+    },
+    {
+      title: "消去法實戰 3：合營企業、特許經營與公營公司的特點",
+      stem: "下列哪些有關「合營企業」、「特許經營」及「公營公司」的陳述是正確的？",
+      rawStmts: [
+        { text: "合營企業是由最少兩家企業共同出資組成的新獨立企業個體，在合作項目完成後通常便解散。", hint: "思考方向：回想合營企業的定義——它是否獨立於原有企業的新個體？項目完成後會如何處理？", isTrue: true, exp: "正確！合營企業是獨立於原有合夥企業的新個體，旨在結合雙方專長完成特定項目。" },
+        { text: "加盟特許經營業務的特許權使用人可憑知名品牌較易進入市場，並享有總部提供的穩定物資供應及推廣支援。", hint: "思考方向：創業者選擇加盟知名特許經營品牌，能獲得總部哪些方面的開業與營運支援？", isTrue: true, exp: "正確！這是特許權使用人（加盟商）的主要好處。" },
+        { text: "公營公司是獨立的法定個體，董事局主席及成員由政府委任，以商業模式運作並財政上自給自足（政府不參與日常營運）。", hint: "思考方向：核對香港公營公司（如機管局、海洋公園公司）在法人地位、董事局委任及財政運作上的特徵。", isTrue: true, exp: "正確！這是香港公營公司（如機管局、海洋公園公司）的核心特徵。" }
+      ]
+    },
+    {
+      title: "消去法實戰 4：跨國公司與名義合夥人的特徵判別",
+      stem: "下列哪些有關「跨國公司」及「名義合夥人」的陳述是正確的？",
+      rawStmts: [
+        { text: "一家在香港設立總部、並在越南及馬來西亞設立生產廠房或銷售分行的企業，屬於跨國公司。", hint: "思考方向：在母國以外的多個國家設有生產廠房或銷售分行，是否符合跨國公司的定義？", isTrue: true, exp: "正確！在母國以外的其他國家設有實質營運分支（廠房或分行）即屬跨國公司。" },
+        { text: "名義合夥人不會向合夥商號投入資本，亦不參與日常管理，但須對合夥商號的債務承擔責任。", hint: "思考方向：名義合夥人雖不出資及不管理，但若商號欠債，他在法律上是否仍須對不知情第三方債權人負責？", isTrue: true, exp: "正確！名義合夥人只借出名字或聲譽，不出資亦不管理，但對不知情第三方仍負合夥債務責任。" },
+        { text: "任何從外國供應商購買原材料、或透過本地出口代理商把貨品賣到海外的本地獨資商號，均屬於跨國公司。", hint: "思考方向：單純進行進出口貿易或向海外採購原料（而沒有在外國設立實質營運分支），算不算跨國公司？", isTrue: false, exp: "錯誤！僅進行進出口貿易、全球採購或在海外發債，而沒有在其他國家設立實質營運分支，並不屬於跨國公司！" }
+      ]
+    }
+  ];
+
+  const allComboDefs = [
+    { order: 1, reqTrue: [1], reqFalse: [2, 3], text: "只有 (1)" },
+    { order: 2, reqTrue: [2], reqFalse: [1, 3], text: "只有 (2)" },
+    { order: 3, reqTrue: [3], reqFalse: [1, 2], text: "只有 (3)" },
+    { order: 4, reqTrue: [1, 2], reqFalse: [3], text: "只有 (1) 及 (2)" },
+    { order: 5, reqTrue: [1, 3], reqFalse: [2], text: "只有 (1) 及 (3)" },
+    { order: 6, reqTrue: [2, 3], reqFalse: [1], text: "只有 (2) 及 (3)" },
+    { order: 7, reqTrue: [1, 2, 3], reqFalse: [], text: "(1)、(2) 及 (3)" }
+  ];
+
+  function prepareDynamicMC(mcItem) {
+    const shuffled = shuffle(mcItem.rawStmts);
+    mcItem.stmts = shuffled.map((s, idx) => ({
+      id: idx + 1,
+      text: `(${idx + 1}) ${s.text}`,
+      hint: s.hint,
+      isTrue: s.isTrue,
+      exp: s.exp
+    }));
+    const trueIds = mcItem.stmts.filter(s => s.isTrue).map(s => s.id);
+    const correctCombo = allComboDefs.find(c =>
+      c.reqTrue.length === trueIds.length && c.reqTrue.every(id => trueIds.includes(id))
+    );
+    const wrongPool = shuffle(allComboDefs.filter(c => c !== correctCombo)).slice(0, 3);
+    const chosenCombos = [correctCombo, ...wrongPool].sort((a, b) => a.order - b.order);
+    const letters = ["A", "B", "C", "D"];
+    mcItem.options = chosenCombos.map((c, idx) => ({
+      label: `${letters[idx]}. ${c.text}`,
+      reqTrue: c.reqTrue,
+      reqFalse: c.reqFalse
+    }));
+    mcItem.ansIdx = chosenCombos.indexOf(correctCombo);
+  }
+
+  function randomizeAllData() {
+    vsCards.forEach(v => { v.quizOpts = shuffle(v.rawOpts); });
+    arcadeItems = shuffle(arcadeItems);
+    legoChallenges.forEach(ch => {
+      ch.step0 = shuffle(ch.step0);
+      ch.step1 = shuffle(ch.step1);
+      ch.step2 = shuffle(ch.step2);
+    });
+    redPenCases.forEach(c => { c.chips = shuffle(c.chips); });
+    elimMCs = shuffle(elimMCs);
+    elimMCs.forEach(m => prepareDynamicMC(m));
+  }
+
+  // ==================== 狀態管理 ====================
+  let curMode = 0;
+  let subIdx = [0, 0, 0, 0, 0];
+  let doneMap = {};
+  let score = 0;
+  let combo = 0;
+  let isZoom = false;
+
+  let legoPicked = [null, null, null];
+  let elimState = { 1: null, 2: null, 3: null };
+
+  function reshuffleAll() {
+    randomizeAllData();
+    legoPicked = [null, null, null];
+    elimState = { 1: null, 2: null, 3: null };
+    renderStage();
+  }
+
+  function toggleZoom() {
+    isZoom = !isZoom;
+    document.documentElement.style.setProperty('--scale', isZoom ? '1.18' : '1');
+    document.getElementById("zoomBtn").innerText = isZoom ? "🔍 大字體：開" : "🔍 大字體：關";
+  }
+
+  function addScore(pts, key) {
+    combo++;
+    if (!doneMap[key]) {
+      doneMap[key] = true;
+      score += pts;
+    }
+    updateTopBar();
+  }
+
+  function breakCombo() {
+    combo = 0;
+    updateTopBar();
+    const st = document.getElementById("mainStage");
+    st.classList.remove("shake");
+    void st.offsetWidth;
+    st.classList.add("shake");
+  }
+
+  function updateTopBar() {
+    document.getElementById("comboBadge").innerText = `🔥 連擊：${combo}`;
+    document.getElementById("scoreBadge").innerText = `⭐ 總分：${score}`;
+  }
+
+  function switchMode(m) {
+    curMode = m;
+    for (let i = 0; i < 5; i++) {
+      document.getElementById(`mTab${i}`).className = "mode-tab" + (i === m ? " active" : "");
+    }
+    legoPicked = [null, null, null];
+    elimState = { 1: null, 2: null, 3: null };
+    renderStage();
+  }
+
+  function goSub(idx) {
+    subIdx[curMode] = idx;
+    legoPicked = [null, null, null];
+    elimState = { 1: null, 2: null, 3: null };
+    renderStage();
+  }
+
+  function nextOrSwitch(maxLen, nextModeIdx) {
+    if (subIdx[curMode] < maxLen - 1) {
+      goSub(subIdx[curMode] + 1);
+    } else {
+      switchMode(nextModeIdx);
+    }
+  }
+
+  function moveSub(delta, maxLen) {
+    let next = subIdx[curMode] + delta;
+    if (next >= 0 && next < maxLen) goSub(next);
+  }
+
+  function buildDots(total) {
+    let html = "";
+    for (let i = 0; i < total; i++) {
+      const k = `${curMode}_${i}`;
+      const cls = (i === subIdx[curMode]) ? "dot-btn active" : (doneMap[k] ? "dot-btn done" : "dot-btn");
+      html += `<button class="${cls}" onclick="goSub(${i})">${i + 1}</button>`;
+    }
+    return html;
+  }
+
+  function renderStage() {
+    const stage = document.getElementById("mainStage");
+    stage.classList.remove("pop");
+    void stage.offsetWidth;
+    stage.classList.add("pop");
+
+    if (curMode === 0) renderVisualMode(stage);
+    else if (curMode === 1) renderArcadeMode(stage);
+    else if (curMode === 2) renderLegoMode(stage);
+    else if (curMode === 3) renderRedPenMode(stage);
+    else if (curMode === 4) renderElimMode(stage);
+  }
+
+  // ==================== 渲染模式 1：視覺對比圖卡 ====================
+  function renderVisualMode(stage) {
+    const idx = subIdx[0];
+    const item = vsCards[idx];
+    const btns = item.quizOpts.map((opt, oIdx) =>
+      `<button class="quick-btn" onclick="checkVisualQuiz(${oIdx})">${opt.text}</button>`
+    ).join("");
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner" style="margin-top:10px; margin-bottom:4px;">
+        <span class="scaffold-tag">🌱 導學思考引導</span>
+        ${item.guideHint}
+      </div>
+    ` : '';
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">⚡ 視覺對比圖卡 ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(vsCards.length)}</div>
+        </div>
+        <div class="visual-banner">
+          <span class="visual-topic-tag">${item.topic}</span>
+          <div class="visual-main-q">${item.q}</div>
+        </div>
+        <div class="vs-grid">
+          <div class="vs-card vs-true">
+            <span class="vs-icon">${item.trueIcon}</span>
+            <span class="vs-badge">🟢 核心真相（得分位）</span>
+            <div class="vs-headline">${item.trueTitle}</div>
+            <div class="vs-desc">${item.trueDesc}</div>
+          </div>
+          <div class="vs-card vs-false">
+            <span class="vs-icon">${item.falseIcon}</span>
+            <span class="vs-badge">🔴 常犯誤區（失分陷阱）</span>
+            <div class="vs-headline">${item.falseTitle}</div>
+            <div class="vs-desc">${item.falseDesc}</div>
+          </div>
+        </div>
+        ${scaffoldHtml}
+        <div class="interactive-check-bar">
+          <span class="quick-quiz-q">💡 ${item.quizQ}</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">${btns}</div>
+        </div>
+        <div class="feedback-pop" id="visFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${vsCards.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一張圖卡</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${vsCards.length}, 1)">
+          ${idx === vsCards.length - 1 ? '進入「情境快閃分類」 →' : '下一張圖卡 →'}
+        </button>
+      </div>
+    `;
+  }
+
+  function checkVisualQuiz(chosenIdx) {
+    const idx = subIdx[0];
+    const item = vsCards[idx];
+    if (item.quizOpts[chosenIdx].ok) {
+      addScore(10, `0_${idx}`);
+      renderVisualMode(document.getElementById("mainStage"));
+      const fb = document.getElementById("visFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = "🎉 <strong>一擊即中！（+10 分）</strong> 你已成功掌握這張圖卡的核心對比！";
+    } else {
+      breakCombo();
+      const fb = document.getElementById("visFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = "⚠️ <strong>再看一次左方綠色卡！</strong> 小心不要跌入右方紅色卡的常見陷阱！";
+    }
+  }
+
+  // ==================== 渲染模式 2：街機式情境快閃分類 ====================
+  function renderArcadeMode(stage) {
+    const idx = subIdx[1];
+    const item = arcadeItems[idx];
+
+    const visibleCats = isBasicMode
+      ? arcadeCategoriesMeta.filter(c => item.basicPool.includes(c.key))
+      : arcadeCategoriesMeta;
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner">
+        <span class="scaffold-tag">🌱 導學思維引導</span>
+        ${item.guideHint}（已為你縮小範圍至 3 個相關類別，並附設概念特徵）
+      </div>
+    ` : '';
+
+    const catBtns = visibleCats.map(catObj => {
+      const icon = catObj.key.split(" ")[0];
+      const name = catObj.key.split(" ")[1];
+      return `
+        <button class="cat-btn" onclick="checkArcade('${catObj.key}')">
+          <span class="cat-emo">${icon}</span>
+          <span>${name}</span>
+          ${isBasicMode ? `<span class="cat-sub-desc">${catObj.desc}</span>` : ''}
+        </button>
+      `;
+    }).join("");
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🎮 情境快閃分類 ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(arcadeItems.length)}</div>
+        </div>
+        <div class="arcade-arena">
+          ${scaffoldHtml}
+          <div class="arcade-card">
+            <span class="arcade-emoji">${item.emoji}</span>
+            <div class="arcade-text">${item.text}</div>
+          </div>
+          <div class="category-grid ${isBasicMode ? 'grid-3col' : ''}">${catBtns}</div>
+          <div class="feedback-pop" id="arcFb" style="text-align:left;"></div>
+        </div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${arcadeItems.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一情境</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${arcadeItems.length}, 2)">
+          ${idx === arcadeItems.length - 1 ? '進入「磁力積木砌答案」 →' : '下一情境 →'}
+        </button>
+      </div>
+    `;
+  }
+
+  function checkArcade(chosenCat) {
+    const idx = subIdx[1];
+    const item = arcadeItems[idx];
+    const isOk = (chosenCat === item.ans);
+    if (isOk) {
+      addScore(15, `1_${idx}`);
+      renderArcadeMode(document.getElementById("mainStage"));
+      const fb = document.getElementById("arcFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `🎯 <strong>快閃分類正確：${item.ans}！（+15 分）</strong><br>${item.exp}`;
+    } else {
+      breakCombo();
+      const fb = document.getElementById("arcFb");
+      fb.style.display = "block";
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = `❌ <strong>你選了「${chosenCat}」，再想一想！</strong> 留意藍字關鍵詞符合哪種企業擁有權的特徵？`;
+    }
+  }
+
+  // ==================== 渲染模式 3：磁力積木砌答案 ====================
+  function renderLegoMode(stage) {
+    const idx = subIdx[2];
+    const item = legoChallenges[idx];
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner">
+        <span class="scaffold-tag">🌱 導學答題思維引導</span>
+        ${item.guideHint}<br>
+        ✨ <strong>導學支援</strong>：每步已精簡字數並縮小至 2 個核心選項，點選後會<strong>即時回饋你所選積木是否合乎邏輯</strong>！
+      </div>
+    ` : '';
+
+    let trayHtml = "";
+    if (legoPicked[0] === null && legoPicked[1] === null && legoPicked[2] === null) {
+      trayHtml = `<span class="tray-placeholder">👇 請依序點擊下方「🟦 概念積木」＋「🟨 情境起因積木」＋「🟩 商業結果積木」拼出滿分答案</span>`;
+    } else {
+      const colors = ["chip-step0", "chip-step1", "chip-step2"];
+      const stepLabels = ["🟦 概念", "🟨 起因", "🟩 結果"];
+      legoPicked.forEach((pk, sIdx) => {
+        if (pk !== null) {
+          const obj = item[`step${sIdx}`][pk];
+          const txt = isBasicMode ? obj.easyText : obj.text;
+          trayHtml += `<span class="slot-chip ${colors[sIdx]}" onclick="removeLego(${sIdx})" title="點擊退回此積木">${stepLabels[sIdx]}：${txt} ✖</span>`;
+        }
+      });
+    }
+
+    const buildPool = (stepArr, sIdx, tagLabel, tagBg, tagColor) => {
+      const visibleArr = isBasicMode ? stepArr.filter(b => b.basicKeep) : stepArr;
+      return visibleArr.map((blk) => {
+        const origIdx = stepArr.indexOf(blk);
+        const isSel = (legoPicked[sIdx] === origIdx);
+        let selCls = "";
+        if (isSel) {
+          selCls = (isBasicMode && !blk.ok) ? "selected-err" : "selected";
+        }
+        const displayTxt = isBasicMode ? blk.easyText : blk.text;
+        let statusTag = `${tagLabel}`;
+        if (isSel) {
+          statusTag += isBasicMode ? (blk.ok ? ' ✅ 邏輯正確' : ' ❌ 再想一想') : ' ✓ 已選';
+        }
+        return `
+          <button class="mag-block ${selCls}" onclick="pickLego(${sIdx}, ${origIdx})">
+            <span class="block-tag" style="background:${tagBg}; color:${tagColor};">${statusTag}</span>
+            <div>${displayTxt}</div>
+          </button>
+        `;
+      }).join("");
+    };
+
+    const getStepInlineFeedback = (sIdx) => {
+      if (!isBasicMode || legoPicked[sIdx] === null) return "";
+      const pickedObj = item[`step${sIdx}`][legoPicked[sIdx]];
+      return pickedObj.ok
+        ? `<span style="color:#16a34a; font-size:calc(12.5px * var(--scale));">✅ 此步推論正確！</span>`
+        : `<span style="color:#e11d48; font-size:calc(12.5px * var(--scale));">❌ ${pickedObj.err}</span>`;
+    };
+
+    const poolGridClass = isBasicMode ? "blocks-pool pool-2col" : "blocks-pool";
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🧲 ${item.title} ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">
+            <button class="helper-btn" onclick="autoFillCorrectLego()">💡 示範滿分拼法</button>
+            ${buildDots(legoChallenges.length)}
+          </div>
+        </div>
+        ${scaffoldHtml}
+        <div class="question-strip">${item.q}</div>
+        <div class="tray-header">
+          <span style="font-size:calc(13.5px * var(--scale)); font-weight:900; color:var(--text);">📥 你的磁力答題槽：</span>
+          <button class="helper-btn" style="border-color:#64748b; color:#475569; background:#f1f5f9;" onclick="resetLegoTray()">🔄 清空並重排積木</button>
+        </div>
+        <div class="tray-box" id="legoTray">${trayHtml}</div>
+
+        <div class="blocks-section-title">
+          <span>1️⃣ 第一步：點選「概念標題積木」［佔 1 分］</span>
+          ${getStepInlineFeedback(0)}
+        </div>
+        <div class="${poolGridClass}">${buildPool(item.step0, 0, "🟦 概念標題［1 分］", "#dbeafe", "#1e3a8a")}</div>
+
+        <div class="blocks-section-title">
+          <span>2️⃣ 第二步：點選「情境起因積木」［扣連個案背景］</span>
+          ${getStepInlineFeedback(1)}
+        </div>
+        <div class="${poolGridClass}">${buildPool(item.step1, 1, "🟨 情境起因", "#fef3c7", "#92400e")}</div>
+
+        <div class="blocks-section-title">
+          <span>3️⃣ 第三步：點選「商業結果積木」［完成因果闡釋，佔 1 分］</span>
+          ${getStepInlineFeedback(2)}
+        </div>
+        <div class="${poolGridClass}">${buildPool(item.step2, 2, "🟩 商業結果［1 分］", "#ccfbf1", "#115e59")}</div>
+
+        <div class="feedback-pop" id="legoFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${legoChallenges.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一題</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${legoChallenges.length}, 3)">
+          ${idx === legoChallenges.length - 1 ? '進入「紅筆捉錯挑戰」 →' : '下一題 →'}
+        </button>
+      </div>
+    `;
+
+    if (legoPicked[0] !== null && legoPicked[1] !== null && legoPicked[2] !== null) {
+      evaluateLego();
+    }
+  }
+
+  function pickLego(sIdx, bIdx) {
+    legoPicked[sIdx] = bIdx;
+    renderLegoMode(document.getElementById("mainStage"));
+  }
+
+  function removeLego(sIdx) {
+    legoPicked[sIdx] = null;
+    renderLegoMode(document.getElementById("mainStage"));
+  }
+
+  function resetLegoTray() {
+    const ch = legoChallenges[subIdx[2]];
+    ch.step0 = shuffle(ch.step0);
+    ch.step1 = shuffle(ch.step1);
+    ch.step2 = shuffle(ch.step2);
+    legoPicked = [null, null, null];
+    renderLegoMode(document.getElementById("mainStage"));
+  }
+
+  function autoFillCorrectLego() {
+    const item = legoChallenges[subIdx[2]];
+    legoPicked[0] = item.step0.findIndex(b => b.ok);
+    legoPicked[1] = item.step1.findIndex(b => b.ok);
+    legoPicked[2] = item.step2.findIndex(b => b.ok);
+    renderLegoMode(document.getElementById("mainStage"));
+  }
+
+  function evaluateLego() {
+    const idx = subIdx[2];
+    const item = legoChallenges[idx];
+    const b0 = item.step0[legoPicked[0]];
+    const b1 = item.step1[legoPicked[1]];
+    const b2 = item.step2[legoPicked[2]];
+    const fb = document.getElementById("legoFb");
+    fb.style.display = "block";
+
+    if (b0.ok && b1.ok && b2.ok) {
+      addScore(20, `2_${idx}`);
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `🏆 <strong>磁力積木拼合完美！穩奪 2 / 2 分滿分！（+20 分）</strong><br>✨ <strong>完整標準答案</strong>：「<strong>${b0.text}［1 分］</strong>：<strong>${b1.text}，${b2.text}［1 分］</strong>」`;
+    } else {
+      breakCombo();
+      let errs = [];
+      if (!b0.ok) errs.push(`• 🟦 <strong>概念積木有誤</strong>：${b0.err}`);
+      if (!b1.ok) errs.push(`• 🟨 <strong>起因積木有誤</strong>：${b1.err}`);
+      if (!b2.ok) errs.push(`• 🟩 <strong>結果積木有誤</strong>：${b2.err}`);
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = `⚠️ <strong>積木組合存在失分陷阱（請直接點擊下方正確積木替換）：</strong><br>${errs.join("<br>")}`;
+    }
+  }
+
+  // ==================== 渲染模式 4：紅筆捉錯挑戰 ====================
+  function renderRedPenMode(stage) {
+    const idx = subIdx[3];
+    const item = redPenCases[idx];
+    const nums = ["①", "②", "③"];
+
+    const scaffoldHtml = isBasicMode ? `
+      <div class="scaffold-banner">
+        <span class="scaffold-tag">🌱 導學審題切入點</span>
+        ${item.guideHint}（已為你精簡句子字數，方便檢視邏輯）
+      </div>
+    ` : '';
+
+    const chipsHtml = item.chips.map((ch, cIdx) => {
+      const displayTxt = isBasicMode ? ch.easyText : ch.text;
+      return `
+        <div class="sentence-chip" id="rpChip_${cIdx}" onclick="checkRedPen(${cIdx})">
+          <span>${nums[cIdx]} ${displayTxt}</span>
+          <span style="font-size:calc(13px * var(--scale)); color:var(--red); font-weight:900; white-space:nowrap;">🖍️ 點此捉錯</span>
+        </div>
+      `;
+    }).join("");
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🖍️ ${item.title} ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(redPenCases.length)}</div>
+        </div>
+        ${scaffoldHtml}
+        <div class="question-strip">${item.q}</div>
+        <div class="paper-sheet">
+          <div class="paper-instruction">🖍️ 句子次序已隨機洗牌！以下答卷有其中一句藏有嚴重概念錯誤，請直接點擊該句將它揪出來：</div>
+          <div class="sentence-chips-wrap">${chipsHtml}</div>
+        </div>
+        <div class="feedback-pop" id="rpFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${redPenCases.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一份答卷</button>
+        <button class="nav-btn primary-action" onclick="nextOrSwitch(${redPenCases.length}, 4)">
+          ${idx === redPenCases.length - 1 ? '進入「選擇題消去擂台」 →' : '下一份答卷 →'}
+        </button>
+      </div>
+    `;
+  }
+
+  function checkRedPen(cIdx) {
+    const idx = subIdx[3];
+    const item = redPenCases[idx];
+    const ch = item.chips[cIdx];
+    const nums = ["①", "②", "③"];
+    const el = document.getElementById(`rpChip_${cIdx}`);
+    const fb = document.getElementById("rpFb");
+    fb.style.display = "block";
+
+    if (ch.isFlaw) {
+      el.className = "sentence-chip flaw-found";
+      addScore(20, `3_${idx}`);
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `<strong>🖍️ 紅筆精準捉錯（第 ${nums[cIdx]} 句得 0 分）！</strong><br>${item.exp}`;
+    } else {
+      el.className = "sentence-chip good-clicked";
+      breakCombo();
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = `⭕ <strong>第 ${nums[cIdx]} 句是完全正確的得分句！</strong> 請再仔細檢查其餘句子，找出真正的概念陷阱！`;
+    }
+  }
+
+  // ==================== 渲染模式 5：互動消去法選擇題擂台 ====================
+  function renderElimMode(stage) {
+    const idx = subIdx[4];
+    const item = elimMCs[idx];
+
+    const stmtsHtml = item.stmts.map(st => {
+      const curVal = elimState[st.id];
+      return `
+        <div class="elim-stmt-row">
+          <div class="elim-stmt-text">
+            ${st.text}
+            ${isBasicMode ? `<span class="elim-stmt-hint">🤔 ${st.hint}</span>` : ''}
+          </div>
+          <div class="elim-toggles">
+            <button class="elim-btn ${curVal === true ? 't-true' : ''}" onclick="toggleElim(${st.id}, true)">⭕ 正確</button>
+            <button class="elim-btn ${curVal === false ? 't-false' : ''}" onclick="toggleElim(${st.id}, false)">❌ 錯誤</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    const optsHtml = item.options.map((opt, oIdx) => {
+      let isElim = false;
+      [1, 2, 3].forEach(sId => {
+        if (elimState[sId] === true && opt.reqFalse.includes(sId)) isElim = true;
+        if (elimState[sId] === false && opt.reqTrue.includes(sId)) isElim = true;
+      });
+      return `<button class="mc-card-btn ${isElim ? 'eliminated' : ''}" onclick="checkElimMc(${oIdx})">${opt.label}</button>`;
+    }).join("");
+
+    stage.innerHTML = `
+      <div>
+        <div class="level-header">
+          <span class="level-title">🏆 ${item.title} ${getModeBadgeHtml()}</span>
+          <div class="dots-nav">${buildDots(elimMCs.length)}</div>
+        </div>
+        <div class="question-strip">${item.stem}</div>
+        <p style="font-size:calc(14px * var(--scale)); font-weight:800; color:var(--teal); margin-bottom:8px;">
+          💡 消去法步驟：請先在右方逐句標記「⭕ 正確」或「❌ 錯誤」，下方矛盾的選項便會自動劃走！
+        </p>
+        <div>${stmtsHtml}</div>
+        <div class="mc-options-row">${optsHtml}</div>
+        <div class="feedback-pop" id="elimFb"></div>
+      </div>
+      <div class="footer-nav">
+        <button class="nav-btn" onclick="moveSub(-1, ${elimMCs.length})" ${idx === 0 ? 'style="visibility:hidden"' : ''}>← 上一題</button>
+        <button class="nav-btn primary-action" onclick="moveSub(1, ${elimMCs.length})" ${idx === elimMCs.length - 1 ? 'style="visibility:hidden"' : ''}>下一題 →</button>
+      </div>
+    `;
+  }
+
+  function toggleElim(sId, val) {
+    elimState[sId] = (elimState[sId] === val) ? null : val;
+    renderElimMode(document.getElementById("mainStage"));
+  }
+
+  function checkElimMc(oIdx) {
+    const idx = subIdx[4];
+    const item = elimMCs[idx];
+    const fb = document.getElementById("elimFb");
+    fb.style.display = "block";
+    if (oIdx === item.ansIdx) {
+      addScore(20, `4_${idx}`);
+      const breakdown = item.stmts.map(s => `• <strong>陳述 (${s.id}) ${s.isTrue ? '⭕ 正確' : '❌ 錯誤'}</strong>：${s.exp}`).join("<br>");
+      fb.className = "feedback-pop fb-ok";
+      fb.innerHTML = `<strong>🏆 答對了！標準答案：${item.options[item.ansIdx].label}</strong><br>${breakdown}`;
+    } else {
+      breakCombo();
+      fb.className = "feedback-pop fb-err";
+      fb.innerHTML = "❌ <strong>選項不正確！</strong> 試試先在上方逐句判斷 (1)、(2)、(3) 的對錯，利用消去法鎖定答案！";
+    }
+  }
+
+  // 啟動應用程式
+  randomizeAllData();
+  renderStage();
+</script>
+</body>
+</html>
